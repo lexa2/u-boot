@@ -11,6 +11,8 @@
 
 #include <linux/sizes.h>
 
+#include <dt-bindings/clock/mt7629-clk.h>
+
 #ifndef __ASSEMBLY__
 extern unsigned long get_spl_size(void);
 #endif
