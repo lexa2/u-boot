@@ -117,6 +117,13 @@ config MVEBU_A3700_SPI
 	  used to access the SPI NOR flash on platforms embedding this
 	  Marvell IP core.
 
+config MTK_QSPI
+	bool "Mediatek QSPI driver"
+	help
+	  Enable the Mediatek QSPI driver. This driver can be
+	  used to access the SPI NOR flash on platforms embedding this
+	  Mediatek QSPI IP core.
+
 config PIC32_SPI
 	bool "Microchip PIC32 SPI driver"
 	depends on MACH_PIC32
