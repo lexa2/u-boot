@@ -63,4 +63,8 @@
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 	FDT_HIGH
 
+#define CONFIG_MENU_SHOW
+#define CONFIG_BOOTDELAY 3
+
+
 #endif

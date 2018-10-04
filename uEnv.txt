@@ -13,3 +13,5 @@ checksd=fatinfo ${device} 1:1
 selectmmc=if run checksd; then echo Boot from SD ; setenv partition 1:1;else echo Boot from eMMC; setenv partition 0:1 ; fi;
 newboot=run selectmmc;fatload ${device} ${partition} ${loadaddr} ${bpi}/${board}/${service}/${kernel}; bootm
 
+bootmenu_0=1. Reload Bootmenu.=run reloadmenu
+reloadmenu=run selectmmc; run loadbootenv; run importenv; bootmenu
