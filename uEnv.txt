@@ -1,0 +1,15 @@
+scriptaddr=0x83000000
+bpi=bananapi
+board=bpi-r2
+service=linux
+device=mmc
+partition=1:1
+bootenv=uEnv.txt
+kernel=uImage
+root=/dev/mmcblk0p1
+loadbootenv=fatload ${device} ${partition} ${scriptaddr} ${bpi}/${board}/${service}/${bootenv}
+importenv=env import -t ${scriptaddr} ${filesize}
+checksd=fatinfo ${device} 1:1
+selectmmc=if run checksd; then echo Boot from SD ; setenv partition 1:1;else echo Boot from eMMC; setenv partition 0:1 ; fi;
+newboot=run selectmmc;fatload ${device} ${partition} ${loadaddr} ${bpi}/${board}/${service}/${kernel}; bootm
+
