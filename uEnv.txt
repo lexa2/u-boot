@@ -6,12 +6,17 @@ device=mmc
 partition=1:1
 bootenv=uEnv.txt
 kernel=uImage
-root=/dev/mmcblk0p1
+loadaddr=0x80200000
+bootargs=console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait ip=dhcp
+
 loadbootenv=fatload ${device} ${partition} ${scriptaddr} ${bpi}/${board}/${service}/${bootenv}
 importenv=env import -t ${scriptaddr} ${filesize}
 checksd=fatinfo ${device} 1:1
 selectmmc=if run checksd; then echo Boot from SD ; setenv partition 1:1;else echo Boot from eMMC; setenv partition 0:1 ; fi;
 newboot=run selectmmc;fatload ${device} ${partition} ${loadaddr} ${bpi}/${board}/${service}/${kernel}; bootm
 
-bootmenu_0=1. Reload Bootmenu.=run reloadmenu
 reloadmenu=run selectmmc; run loadbootenv; run importenv; bootmenu
+boot1=run selectmmc; run loadbootenv; run importenv; run newboot;
+
+bootmenu_0=1. Reload Bootmenu.=run reloadmenu
+bootmenu_1=2. Boot from SD/EMMC.=run boot1
