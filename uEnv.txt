@@ -18,5 +18,7 @@ newboot=run selectmmc;fatload ${device} ${partition} ${loadaddr} ${bpi}/${board}
 reloadmenu=run selectmmc; run loadbootenv; run importenv; bootmenu
 boot1=run selectmmc; run loadbootenv; run importenv; run newboot;
 
+bootmenu_default=1
+
 bootmenu_0=1. Reload Bootmenu.=run reloadmenu
 bootmenu_1=2. Boot from SD/EMMC.=run boot1
