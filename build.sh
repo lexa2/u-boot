@@ -12,6 +12,17 @@ case $1 in
 	"importconfig")
 		make mt7623n_bpir2_defconfig;
 	;;
+	"install")
+		dev=/dev/sdb
+		read -e -i "$dev" -p "Please enter target device: " dev
+		sudo dd of=$dev if=u-boot.bin bs=1k seek=320;
+		sync
+	;;
+	"umount")
+		umount /media/$USER/BPI-BOOT
+		umount /media/$USER/BPI-ROOT
+	;;
+
 	*)
 		make;
 	;;
