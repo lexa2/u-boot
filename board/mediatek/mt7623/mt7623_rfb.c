@@ -4,6 +4,7 @@
  */
 
 #include <common.h>
+#include <mmc.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -15,9 +16,8 @@ int board_init(void)
 	return 0;
 }
 
-int mmc_get_env_dev(void)
+int mmc_get_boot_dev(void)
 {
-	printf("%s:%d %s\n",__FILE__,__LINE__,__FUNCTION__);
 	int g_mmc_devid = -1;
 	char *uflag = (char *)0x81DFFFF0;
 	if((uflag[0] == 'e') && (uflag[1] == 'M') && (uflag[2] == 'M') && (uflag[3] == 'C'))
@@ -30,5 +30,39 @@ int mmc_get_env_dev(void)
 		g_mmc_devid = 1;
 		printf("Boot From SD(id:%d)\n\n", g_mmc_devid);
 	}
+	//try to register a env-var, but seems not working (maybe overidden by default env)
+	char intstr[2];
+	sprintf(intstr, "%d", g_mmc_devid);
+	env_set("bootdev", intstr);
+	return g_mmc_devid;
+}
+
+int mmc_get_env_dev(void)
+{
+	printf("%s:%d %s\n",__FILE__,__LINE__,__FUNCTION__);
+	mmc_get_boot_dev();
 	return CONFIG_SYS_MMC_ENV_DEV; //have to replaced by g_mmc_devid if sdcard-offset is implemented
 }
+/*
+int mmc_get_env_addr(struct mmc *mmc, int copy, u32 *env_addr)
+{
+	s64 offset = mmc_offset(copy);
+	if (offset < 0)
+		offset += mmc->capacity;
+	*env_addr = offset;
+    return 0;
+}
+*/
+
+static int do_mmc_get_boot_dev(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+{
+	printf("%s:%d %s\n",__FILE__,__LINE__,__FUNCTION__);
+	return mmc_get_boot_dev();
+}
+
+U_BOOT_CMD(
+	bootdev, 1, 0, do_mmc_get_boot_dev,
+	"display Boot-Device",
+	"- display the current Boot-MMC device"
+);
+
