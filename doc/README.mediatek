@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: GPL-2.0+
+#
+# Copyright (C) 2018 MediaTek Inc.
+# Ryder Lee <ryder.lee@kernel.org>
+
+
+This document describes how to compile the U-Boot and how to change U-Boot
+configuration about the MediaTek SoCs.
+
+
+Build Procedure
+===============
+	-Set the cross compiler:
+
+		# export CROSS_COMPILE=/path/to/toolchain/arm-linux-gnueabi-
+
+	-Clean-up old residuals:
+
+		# make mrproper
+
+	-Configure the U-Boot:
+
+		# make <defconfig_file>
+		# make
+
+		- For the MT7623n bananapi R2 board use "mt7623n_bpir2_defconfig"
+		- For the MT7629 reference board use "mt7629_rfb_defconfig"
+
+
+Boot sequence
+=============
+	-Boorom -> MTK preloader -> U-Boot
+
+		- MT7623n
+
+	This version of U-Boot doesn't implement SPL. So, MTK preloader binary
+	is needed to boot up:
+
+	https://github.com/BPI-SINOVOIP/BPI-R2-bsp/tree/master/mt-pack/mtk/bpi-r2/bin
+
+
+	-Boorom -> SPL -> U-Boot
+
+		- MT7629
+
+
+Configuration update
+====================
+	To update the U-Boot configuration, please refer to doc/README.kconfig
+
+
+Documentation
+=============
+	http://wiki.banana-pi.org/Banana_Pi_BPI-R2
