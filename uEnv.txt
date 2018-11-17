@@ -26,11 +26,20 @@ selectmmc=if run checksd; then echo Boot from SD ; setenv partition 1:1;else ech
 
 newboot=run buildargs;printenv bootargs;fatload ${device} ${partition} ${loadaddr} ${bpi}/${board}/${service}/${kernel}; bootm
 
-#bootmenu
 reloadmenu=run selectmmc; run loadbootenv; run importenv; bootmenu
+
+lskernel=ls ${device} ${partition} ${bpi}/${board}/${service};
+askkernel=askenv kernelinput "enter uImage-name:";
+
+#bootmenu
+boot0=run lskernel;run askkernel;if printenv kernelinput ;then setenv kernel ${kernelinput}; run newboot; fi
 boot1=run selectmmc; run loadbootenv; run importenv; run newboot;
 
 bootmenu_default=1
 
-bootmenu_0=1. Reload Bootmenu.=run reloadmenu
+bootmenu_0=1. Enter kernel-name to boot from SD/EMMC.=run boot0
 bootmenu_1=2. Boot from SD/EMMC.=run boot1
+
+#automatic reload from sd/emmc
+bootdelay=0
+bootcmd=setenv bootdelay 3; run reloadmenu;

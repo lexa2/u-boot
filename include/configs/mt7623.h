@@ -57,7 +57,7 @@
 	FDT_HIGH
 
 #define CONFIG_SYS_MMC_ENV_DEV	0
-#define CONFIG_MENU_SHOW
+/*#define CONFIG_MENU_SHOW
 #define CONFIG_BOOTDELAY		3
-
+*/
 #endif
