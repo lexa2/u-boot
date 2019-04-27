@@ -243,7 +243,7 @@ fini:
 	return ret;
 }
 
-static int env_mmc_erase(void)
+static int env_mmc_erase(bool use_redund)
 {
 	int dev = mmc_get_env_dev();
 	struct mmc *mmc = find_mmc_device(dev);
@@ -252,7 +252,12 @@ static int env_mmc_erase(void)
 	if (!mmc)
 		return CMD_RET_FAILURE;
 
-	blk = CONFIG_ENV_OFFSET / mmc->read_bl_len;
+#ifdef CONFIG_ENV_OFFSET_REDUND
+	if (use_redund)
+		blk = CONFIG_ENV_OFFSET_REDUND / mmc->read_bl_len;
+	else
+#endif
+		blk = CONFIG_ENV_OFFSET / mmc->read_bl_len;
 	cnt = CONFIG_ENV_SIZE / mmc->read_bl_len;
 
 	printf("\nMMC erase env: dev # %d, block # %d (0x%x), count %d (0x%x)\n",

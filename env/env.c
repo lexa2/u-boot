@@ -256,7 +256,7 @@ int env_save(void)
 	return -ENODEV;
 }
 
-int env_erase(void)
+int env_erase(bool use_redund)
 {
 	struct env_driver *drv;
 
@@ -271,7 +271,7 @@ int env_erase(void)
 			return -ENODEV;
 
 		printf("Erasing Environment on %s... ", drv->name);
-		ret = drv->erase();
+		ret = drv->erase(use_redund);
 		if (ret)
 			printf("Failed (%d)\n", ret);
 		else

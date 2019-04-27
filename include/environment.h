@@ -233,7 +233,7 @@ struct env_driver {
 	 *
 	 * @return 0 if OK, -ve on error
 	 */
-	int (*erase)(void);
+	int (*erase)(bool use_redund);
 
 	/**
 	 * init() - Set up the initial pre-relocation environment
@@ -318,7 +318,7 @@ int env_save(void);
  *
  * @return 0 if OK, -ve on error
  */
-int env_erase(void);
+int env_erase(bool use_redund);
 
 /**
  * env_fix_drivers() - Updates envdriver as per relocation
