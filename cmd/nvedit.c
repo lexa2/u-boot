@@ -766,7 +766,7 @@ U_BOOT_CMD(
 static int do_env_erase(cmd_tbl_t *cmdtp, int flag, int argc,
 			char * const argv[])
 {
-	return env_erase() ? 1 : 0;
+	return env_erase(false) ? 1 : 0;
 }
 U_BOOT_CMD(
 	eraseenv, 1, 0,	do_env_erase,
