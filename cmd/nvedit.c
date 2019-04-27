@@ -766,8 +766,15 @@ U_BOOT_CMD(
 static int do_env_erase(cmd_tbl_t *cmdtp, int flag, int argc,
 			char * const argv[])
 {
-	return env_erase(false) ? 1 : 0;
+	int ret;
+
+	ret=env_erase(false) ? 1 : 0;
+	#ifdef CONFIG_ENV_OFFSET_REDUND
+		ret=ret || (env_erase(true) ? 1 : 0);
+	#endif
+	return ret;
 }
+
 U_BOOT_CMD(
 	eraseenv, 1, 0,	do_env_erase,
 	"erase environment variables from persistent storage",
