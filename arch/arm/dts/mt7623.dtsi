@@ -285,7 +285,7 @@
 //		       <&pcie1_port PHY_TYPE_PCIE>,
 //		       <&u3port1 PHY_TYPE_PCIE>;
 		phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
-//		power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>;
+		power-domains = <&scpsys MT7623_POWER_DOMAIN_HIF>;
 		bus-range = <0x00 0xff>;
 		status = "okay";
 		ranges = <0x81000000 0 0x1a160000 0 0x1a160000 0 0x00010000
