@@ -19,6 +19,8 @@
 #include <linux/libfdt.h>
 #include <dm/lists.h>
 
+#include <dm/read.h> //also includes ofnode.h
+
 #define RT_HIFSYS_BASE		0x1a000000
 #define RT_PCIE_BASE		0x1a140000
 #define RT_PCIE_IOWIN_BASE	0x1a160000
@@ -463,6 +465,27 @@ mt_pcie_probe(struct udevice *dev)
 	return 0;
 }
 
+static int pci_mtk_ofdata_to_platdata(struct udevice *dev)
+{
+	ofnode hifsys = ofnode_by_compatible(ofnode_null(), "mediatek,mt7623-hifsys");
+	if (ofnode_valid(hifsys)) {
+		phys_addr_t hifaddr=ofnode_get_addr(hifsys);
+		if (hifaddr) printf("hifsys-addr:0x%p\n", (void *)hifaddr);
+	}else printf("hifsys not found\n");
+	ofnode subnode;
+	const char *name;
+	const char *compatible=ofnode_read_string(dev->node, "compatible");
+	phys_addr_t addr=ofnode_get_addr(dev->node);
+	if (compatible) printf("pci-mtk-compatible:%s\n", compatible);
+	if (addr) printf("pci-mtk-addr:0x%p\n", (void *)addr);
+
+	dev_for_each_subnode(subnode, dev) {
+		name=ofnode_get_name(subnode);
+		if (name) printf("pci-mtk-name:%s\n", name);
+	}
+	return 0;
+}
+
 static const struct dm_pci_ops mt_pcie_ops = {
 	.read_config	= mt_pcie_read_config,
 	.write_config	= mt_pcie_write_config,
@@ -477,6 +500,7 @@ U_BOOT_DRIVER(pcie_mt2701) = {
 	.name = "pci_mediatek",
 	.id = UCLASS_PCI,
 	.of_match = mt_pcie_ids,
+	.ofdata_to_platdata = pci_mtk_ofdata_to_platdata,
 	.ops = &mt_pcie_ops,
 	.probe	= mt_pcie_probe,
 	.priv_auto_alloc_size = sizeof(struct mt_pcie),
