@@ -19,13 +19,6 @@
 #include <linux/libfdt.h>
 #include <dm/lists.h>
 
-#define iowrite32(v, a)	writel(v, a)
-#define iowrite16(v, a)	writew(v, a)
-#define iowrite8(v, a)	writeb(v, a)
-#define ioread32(a)	readl(a)
-#define ioread16(a)	readw(a)
-#define ioread8(a)	readb(a)
-
 #define RT_HIFSYS_BASE		0x1a000000
 #define RT_PCIE_BASE		0x1a140000
 #define RT_PCIE_IOWIN_BASE	0x1a160000
@@ -154,64 +147,64 @@ mt7623_pcie_pinmux_set(void)
 	u32 regValue;
 
 	/* Pin208: PCIE0_PERST_N (3) */
-	regValue = le32_to_cpu(ioread32(0x100059f0));
+	regValue = le32_to_cpu(readl(0x100059f0));
 	regValue &= ~(BITS(9, 11));
 	regValue |= 3 << 9;
-	iowrite32(regValue, 0x100059f0);
+	writel(regValue, 0x100059f0);
 
 	/* Pin208: PCIE1_PERST_N (3) */
-	regValue = le32_to_cpu(ioread32(0x100059f0));
+	regValue = le32_to_cpu(readl(0x100059f0));
 	regValue &= ~(BITS(12, 14));
 	regValue |= 3 << 12;
-	iowrite32(regValue, 0x100059f0);
+	writel(regValue, 0x100059f0);
 }
 
 static void
 sys_w32(struct mtk_pcie *pcie, u32 val, unsigned int reg)
 {
-	iowrite32(val, pcie->sys_base + reg);
+	writel(val, pcie->sys_base + reg);
 }
 
 static u32
 sys_r32(struct mtk_pcie *pcie, unsigned int reg)
 {
-	return ioread32(pcie->sys_base + reg);
+	return readl(pcie->sys_base + reg);
 }
 
 static void
 pcie_w32(struct mtk_pcie *pcie, u32 val, unsigned int reg)
 {
-	iowrite32(val, pcie->pcie_base + reg);
+	writel(val, pcie->pcie_base + reg);
 }
 
 static void
 pcie_w16(struct mtk_pcie *pcie, u16 val, unsigned int reg)
 {
-	iowrite16(val, pcie->pcie_base + reg);
+	writew(val, pcie->pcie_base + reg);
 }
 
 static void
 pcie_w8(struct mtk_pcie *pcie, u8 val, unsigned int reg)
 {
-	iowrite8(val, pcie->pcie_base + reg);
+	writeb(val, pcie->pcie_base + reg);
 }
 
 static u32
 pcie_r32(struct mtk_pcie *pcie, unsigned int reg)
 {
-	return ioread32(pcie->pcie_base + reg);
+	return readl(pcie->pcie_base + reg);
 }
 
 static u32
 pcie_r16(struct mtk_pcie *pcie, unsigned int reg)
 {
-	return ioread16(pcie->pcie_base + reg);
+	return readw(pcie->pcie_base + reg);
 }
 
 static u32
 pcie_r8(struct mtk_pcie *pcie, unsigned int reg)
 {
-	return ioread8(pcie->pcie_base + reg);
+	return readb(pcie->pcie_base + reg);
 }
 
 static void
@@ -233,11 +226,11 @@ mtk_pcie_configure_phy(struct mtk_pcie_port *port)
 	for (i = 0; i < ARRAY_SIZE(mtk_phy_init); i++) {
 		void __iomem *phy_addr = (void __iomem *)port->phy_base +
 		    mtk_phy_init[i].reg;
-		u32 val = ioread32(phy_addr);
+		u32 val = readl(phy_addr);
 
 		val &= ~mtk_phy_init[i].mask;
 		val |= mtk_phy_init[i].val;
-		iowrite32(val, phy_addr);
+		writel(val, phy_addr);
 		udelay(100);
 	}
 	mdelay(16);
