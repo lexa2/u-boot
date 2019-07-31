@@ -481,7 +481,7 @@ static const struct udevice_id mt_pcie_ids[] = {
 };
 
 U_BOOT_DRIVER(pcie_mt2701) = {
-	.name = "pci_mt2701",
+	.name = "pci_mediatek",
 	.id = UCLASS_PCI,
 	.of_match = mt_pcie_ids,
 	.ops = &mt_pcie_ops,
