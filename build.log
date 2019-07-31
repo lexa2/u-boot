@@ -1,0 +1,337 @@
+drivers/pci/pcie-mediatek.c:128:18: error: ‘pci_generic_config_read’ undeclared here (not in a function); did you mean ‘pci_read_config_word’?
+  .read_config  = pci_generic_config_read,
+                  ^~~~~~~~~~~~~~~~~~~~~~~
+                  pci_read_config_word
+drivers/pci/pcie-mediatek.c:129:18: error: ‘pci_generic_config_write’ undeclared here (not in a function); did you mean ‘pci_generic_config_read’?
+  .write_config = pci_generic_config_write,
+                  ^~~~~~~~~~~~~~~~~~~~~~~~
+                  pci_generic_config_read
+drivers/pci/pcie-mediatek.c: In function ‘mtk_pcie_startup_port’:
+drivers/pci/pcie-mediatek.c:362:30: error: ‘struct mtk_pcie_port’ has no member named ‘pcie’
+  struct mtk_pcie *pcie = port->pcie;
+                              ^~
+In file included from include/fdt_support.h:154:0,
+                 from include/image.h:59,
+                 from include/common.h:35,
+                 from drivers/pci/pcie-mediatek.c:11:
+drivers/pci/pcie-mediatek.c:363:26: error: ‘struct mtk_pcie_port’ has no member named ‘slot’
+  u32 func = PCI_FUNC(port->slot << 3);
+                          ^
+include/pci.h:514:25: note: in definition of macro ‘PCI_FUNC’
+ #define PCI_FUNC(d)  (((d) >> 8) & 0x7)
+                         ^
+drivers/pci/pcie-mediatek.c:364:13: warning: implicit declaration of function ‘PCI_SLOT’; did you mean ‘PCI_BIST’? [-Wimplicit-function-declaration]
+  u32 slot = PCI_SLOT(port->slot << 3);
+             ^~~~~~~~
+             PCI_BIST
+drivers/pci/pcie-mediatek.c:364:26: error: ‘struct mtk_pcie_port’ has no member named ‘slot’
+  u32 slot = PCI_SLOT(port->slot << 3);
+                          ^~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:369:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  val = readl(pcie->base + PCIE_SYS_CFG);
+                    ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:369:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_SYS_CFG);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:369:27: error: ‘PCIE_SYS_CFG’ undeclared (first use in this function); did you mean ‘PCIE_SISTAT’?
+  val = readl(pcie->base + PCIE_SYS_CFG);
+                           ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:369:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_SYS_CFG);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:369:27: note: each undeclared identifier is reported only once for each function it appears in
+  val = readl(pcie->base + PCIE_SYS_CFG);
+                           ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:369:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_SYS_CFG);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:370:9: warning: implicit declaration of function ‘PCIE_PORT_PERST’ [-Wimplicit-function-declaration]
+  val |= PCIE_PORT_PERST(port->slot);
+         ^~~~~~~~~~~~~~~
+drivers/pci/pcie-mediatek.c:370:29: error: ‘struct mtk_pcie_port’ has no member named ‘slot’
+  val |= PCIE_PORT_PERST(port->slot);
+                             ^~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:371:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  writel(val, pcie->base + PCIE_SYS_CFG);
+                    ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:371:2: note: in expansion of macro ‘writel’
+  writel(val, pcie->base + PCIE_SYS_CFG);
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:374:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  val = readl(pcie->base + PCIE_SYS_CFG);
+                    ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:374:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_SYS_CFG);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:375:30: error: ‘struct mtk_pcie_port’ has no member named ‘slot’
+  val &= ~PCIE_PORT_PERST(port->slot);
+                              ^~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:376:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  writel(val, pcie->base + PCIE_SYS_CFG);
+                    ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:376:2: note: in expansion of macro ‘writel’
+  writel(val, pcie->base + PCIE_SYS_CFG);
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:379:8: warning: implicit declaration of function ‘readl_poll_timeout’ [-Wimplicit-function-declaration]
+  err = readl_poll_timeout(port->base + PCIE_LINK_STATUS, val,
+        ^~~~~~~~~~~~~~~~~~
+drivers/pci/pcie-mediatek.c:379:40: error: ‘PCIE_LINK_STATUS’ undeclared (first use in this function); did you mean ‘PCI_SEC_STATUS’?
+  err = readl_poll_timeout(port->base + PCIE_LINK_STATUS, val,
+                                        ^~~~~~~~~~~~~~~~
+                                        PCI_SEC_STATUS
+drivers/pci/pcie-mediatek.c:380:15: error: ‘PCIE_PORT_LINKUP’ undeclared (first use in this function); did you mean ‘IH_OS_LINUX’?
+      !!(val & PCIE_PORT_LINKUP), 20,
+               ^~~~~~~~~~~~~~~~
+               IH_OS_LINUX
+drivers/pci/pcie-mediatek.c:381:12: error: ‘USEC_PER_MSEC’ undeclared (first use in this function)
+      100 * USEC_PER_MSEC);
+            ^~~~~~~~~~~~~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:386:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  val = readl(pcie->base + PCIE_INT_ENABLE);
+                    ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:386:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_INT_ENABLE);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:386:27: error: ‘PCIE_INT_ENABLE’ undeclared (first use in this function); did you mean ‘PCI_BIST_CAPABLE’?
+  val = readl(pcie->base + PCIE_INT_ENABLE);
+                           ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:386:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_INT_ENABLE);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:387:9: warning: implicit declaration of function ‘PCIE_PORT_INT_EN’; did you mean ‘PCI_VENDOR_ID_XEN’? [-Wimplicit-function-declaration]
+  val |= PCIE_PORT_INT_EN(port->slot);
+         ^~~~~~~~~~~~~~~~
+         PCI_VENDOR_ID_XEN
+drivers/pci/pcie-mediatek.c:387:30: error: ‘struct mtk_pcie_port’ has no member named ‘slot’
+  val |= PCIE_PORT_INT_EN(port->slot);
+                              ^~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:388:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  writel(val, pcie->base + PCIE_INT_ENABLE);
+                    ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:388:2: note: in expansion of macro ‘writel’
+  writel(val, pcie->base + PCIE_INT_ENABLE);
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:391:9: error: ‘PCIE_BAR_MAP_MAX’ undeclared (first use in this function); did you mean ‘PCI_CAP_ID_MAX’?
+  writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
+         ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:391:28: error: ‘PCIE_BAR_ENABLE’ undeclared (first use in this function); did you mean ‘PCIE_INT_ENABLE’?
+  writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
+                            ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:392:22: error: ‘PCIE_BAR0_SETUP’ undeclared (first use in this function); did you mean ‘BAR0SETUP’?
+         port->base + PCIE_BAR0_SETUP);
+                      ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:391:2: note: in expansion of macro ‘writel’
+  writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:395:9: error: ‘PCIE_CLASS_CODE’ undeclared (first use in this function); did you mean ‘PCI_CLASS_CODE’?
+  writel(PCIE_CLASS_CODE | PCIE_REVISION_ID, port->base + PCIE_CLASS);
+         ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:395:27: error: ‘PCIE_REVISION_ID’ undeclared (first use in this function); did you mean ‘PCI_REVISION_ID’?
+  writel(PCIE_CLASS_CODE | PCIE_REVISION_ID, port->base + PCIE_CLASS);
+                           ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:398:9: warning: implicit declaration of function ‘PCIE_CONF_ADDR’; did you mean ‘PCI_COMMAND’? [-Wimplicit-function-declaration]
+  writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+         ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:398:24: error: ‘PCIE_FC_CREDIT’ undeclared (first use in this function); did you mean ‘PCI_IO_LIMIT’?
+  writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+                        ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:399:15: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+         pcie->base + PCIE_CFG_ADDR);
+               ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:398:2: note: in expansion of macro ‘writel’
+  writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:399:22: error: ‘PCIE_CFG_ADDR’ undeclared (first use in this function); did you mean ‘PCIE_CLASS’?
+         pcie->base + PCIE_CFG_ADDR);
+                      ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:398:2: note: in expansion of macro ‘writel’
+  writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:400:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  val = readl(pcie->base + PCIE_CFG_DATA);
+                    ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:400:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_CFG_DATA);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:400:27: error: ‘PCIE_CFG_DATA’ undeclared (first use in this function); did you mean ‘PCIE_CFG_ADDR’?
+  val = readl(pcie->base + PCIE_CFG_DATA);
+                           ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:400:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_CFG_DATA);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:401:10: error: ‘PCIE_FC_CREDIT_MASK’ undeclared (first use in this function); did you mean ‘PCIE_FC_CREDIT’?
+  val &= ~PCIE_FC_CREDIT_MASK;
+          ^~~~~~~~~~~~~~~~~~~
+          PCIE_FC_CREDIT
+drivers/pci/pcie-mediatek.c:402:9: warning: implicit declaration of function ‘PCIE_FC_CREDIT_VAL’ [-Wimplicit-function-declaration]
+  val |= PCIE_FC_CREDIT_VAL(0x806c);
+         ^~~~~~~~~~~~~~~~~~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:404:15: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+         pcie->base + PCIE_CFG_ADDR);
+               ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:403:2: note: in expansion of macro ‘writel’
+  writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:405:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  writel(val, pcie->base + PCIE_CFG_DATA);
+                    ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:405:2: note: in expansion of macro ‘writel’
+  writel(val, pcie->base + PCIE_CFG_DATA);
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:408:24: error: ‘PCIE_FTS_NUM’ undeclared (first use in this function); did you mean ‘PCIE_SYS_CFG’?
+  writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
+                        ^
+./arch/arm/include/asm/io.h:117:34: note: in definition of macro ‘writel’
+ #define writel(v,c) ({ u32 __v = v; __iowmb(); __arch_putl(__v,c); __v; })
+                                  ^
+drivers/pci/pcie-mediatek.c:409:15: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+         pcie->base + PCIE_CFG_ADDR);
+               ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:408:2: note: in expansion of macro ‘writel’
+  writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:410:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  val = readl(pcie->base + PCIE_CFG_DATA);
+                    ^
+./arch/arm/include/asm/io.h:44:54: note: in definition of macro ‘__arch_getl’
+ #define __arch_getl(a)   (*(volatile unsigned int *)(a))
+                                                      ^
+drivers/pci/pcie-mediatek.c:410:8: note: in expansion of macro ‘readl’
+  val = readl(pcie->base + PCIE_CFG_DATA);
+        ^~~~~
+drivers/pci/pcie-mediatek.c:411:10: error: ‘PCIE_FTS_NUM_MASK’ undeclared (first use in this function); did you mean ‘PCIE_FTS_NUM’?
+  val &= ~PCIE_FTS_NUM_MASK;
+          ^~~~~~~~~~~~~~~~~
+          PCIE_FTS_NUM
+drivers/pci/pcie-mediatek.c:412:9: warning: implicit declaration of function ‘PCIE_FTS_NUM_L0’ [-Wimplicit-function-declaration]
+  val |= PCIE_FTS_NUM_L0(0x50);
+         ^~~~~~~~~~~~~~~
+In file included from drivers/pci/pcie-mediatek.c:15:0:
+drivers/pci/pcie-mediatek.c:414:15: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+         pcie->base + PCIE_CFG_ADDR);
+               ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:413:2: note: in expansion of macro ‘writel’
+  writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:415:20: error: ‘struct mtk_pcie’ has no member named ‘base’; did you mean ‘busn’?
+  writel(val, pcie->base + PCIE_CFG_DATA);
+                    ^
+./arch/arm/include/asm/io.h:49:55: note: in definition of macro ‘__arch_putl’
+ #define __arch_putl(v,a)  (*(volatile unsigned int *)(a) = (v))
+                                                       ^
+drivers/pci/pcie-mediatek.c:415:2: note: in expansion of macro ‘writel’
+  writel(val, pcie->base + PCIE_CFG_DATA);
+  ^~~~~~
+drivers/pci/pcie-mediatek.c: In function ‘mtk_pcie_probe’:
+drivers/pci/pcie-mediatek.c:465:19: error: ‘port’ undeclared (first use in this function); did you mean ‘qsort’?
+  mtk_foreach_port(port)
+                   ^
+drivers/pci/pcie-mediatek.c:146:9: note: in definition of macro ‘mtk_foreach_port’
+   for ((p) = mtk_pcie_port; \
+         ^
+drivers/pci/pcie-mediatek.c:468:2: error: expected ‘;’ before ‘return’
+  return 0;
+  ^~~~~~
+drivers/pci/pcie-mediatek.c:469:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+At top level:
+drivers/pci/pcie-mediatek.c:246:1: warning: ‘mtk_pcie_configure_rc’ defined but not used [-Wunused-function]
+ mtk_pcie_configure_rc(struct mtk_pcie *pcie, struct mtk_pcie_port *port)
+ ^~~~~~~~~~~~~~~~~~~~~
+drivers/pci/pcie-mediatek.c:228:1: warning: ‘mtk_pcie_configure_phy’ defined but not used [-Wunused-function]
+ mtk_pcie_configure_phy(struct mtk_pcie_port *port)
+ ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pci/pcie-mediatek.c:175:1: warning: ‘sys_r32’ defined but not used [-Wunused-function]
+ sys_r32(struct mtk_pcie *pcie, unsigned int reg)
+ ^~~~~~~
+drivers/pci/pcie-mediatek.c:169:1: warning: ‘sys_w32’ defined but not used [-Wunused-function]
+ sys_w32(struct mtk_pcie *pcie, u32 val, unsigned int reg)
+ ^~~~~~~
+drivers/pci/pcie-mediatek.c:151:1: warning: ‘mt7623_pcie_pinmux_set’ defined but not used [-Wunused-function]
+ mt7623_pcie_pinmux_set(void)
+ ^~~~~~~~~~~~~~~~~~~~~~
+drivers/pci/pcie-mediatek.c:126:26: warning: ‘mtk_pcie_ops’ defined but not used [-Wunused-variable]
+ static struct dm_pci_ops mtk_pcie_ops = {
+                          ^~~~~~~~~~~~
+make[2]: *** [drivers/pci/pcie-mediatek.o] Error 1
+make[1]: *** [drivers/pci] Error 2
+make: *** [drivers] Error 2
