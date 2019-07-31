@@ -123,6 +123,12 @@ static const struct mtk_phy_init {
 	{ 0xa2c, 0x1ff, 0x10 },
 };
 
+static struct dm_pci_ops mtk_pcie_ops = {
+	//.map_bus = mtk_pcie_map_bus,
+	.read_config  = pci_generic_config_read,
+	.write_config = pci_generic_config_write,
+};
+
 /*
  * Globals.
  */
@@ -262,6 +268,7 @@ mtk_pcie_configure_rc(struct mtk_pcie *pcie, struct mtk_pcie_port *port)
 	mt_pcie_read_config(NULL, (port->id) << 3, 0x70c, &val, PCI_SIZE_32);
 }
 
+/*
 static void
 mtk_pcie_preinit(struct mtk_pcie *pcie)
 {
@@ -271,7 +278,7 @@ mtk_pcie_preinit(struct mtk_pcie *pcie)
 
 	mt7623_pcie_pinmux_set();
 
-	/* PCIe RC Reset */
+	// PCIe RC Reset
 	val = 0;
 	mtk_foreach_port(port)
 		if (port->enable)
@@ -288,13 +295,13 @@ mtk_pcie_preinit(struct mtk_pcie *pcie)
 		udelay(10);
 	}
 
-	/* Configure PCIe PHY */
+	// Configure PCIe PHY
 
 	mtk_foreach_port(port)
 		if (port->enable)
 			mtk_pcie_configure_phy(port);
 
-	/* PCIe EP reset */
+	// PCIe EP reset
 	val = 0;
 	mtk_foreach_port(port)
 		if (port->enable)
@@ -304,7 +311,7 @@ mtk_pcie_preinit(struct mtk_pcie *pcie)
 	pcie_w32(pcie, pcie_r32(pcie, PCICFG) & ~val, PCICFG);
 	mdelay(200);
 
-	/* check the link status */
+	// check the link status
 	val = 0;
 	mtk_foreach_port(port) {
 		if (port->enable) {
@@ -348,6 +355,66 @@ mtk_pcie_preinit(struct mtk_pcie *pcie)
 	mtk_foreach_port(port)
 		if (port->link)
 			mtk_pcie_configure_rc(pcie, port);
+}*/
+
+static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
+{
+	struct mtk_pcie *pcie = port->pcie;
+	u32 func = PCI_FUNC(port->slot << 3);
+	u32 slot = PCI_SLOT(port->slot << 3);
+	u32 val;
+	int err;
+
+	/* assert port PERST_N */
+	val = readl(pcie->base + PCIE_SYS_CFG);
+	val |= PCIE_PORT_PERST(port->slot);
+	writel(val, pcie->base + PCIE_SYS_CFG);
+
+	/* de-assert port PERST_N */
+	val = readl(pcie->base + PCIE_SYS_CFG);
+	val &= ~PCIE_PORT_PERST(port->slot);
+	writel(val, pcie->base + PCIE_SYS_CFG);
+
+	/* 100ms timeout value should be enough for Gen1/2 training */
+	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS, val,
+				 !!(val & PCIE_PORT_LINKUP), 20,
+				 100 * USEC_PER_MSEC);
+	if (err)
+		return -ETIMEDOUT;
+
+	/* enable interrupt */
+	val = readl(pcie->base + PCIE_INT_ENABLE);
+	val |= PCIE_PORT_INT_EN(port->slot);
+	writel(val, pcie->base + PCIE_INT_ENABLE);
+
+	/* map to all DDR region. We need to set it before cfg operation. */
+	writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
+	       port->base + PCIE_BAR0_SETUP);
+
+	/* configure class code and revision ID */
+	writel(PCIE_CLASS_CODE | PCIE_REVISION_ID, port->base + PCIE_CLASS);
+
+	/* configure FC credit */
+	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+	       pcie->base + PCIE_CFG_ADDR);
+	val = readl(pcie->base + PCIE_CFG_DATA);
+	val &= ~PCIE_FC_CREDIT_MASK;
+	val |= PCIE_FC_CREDIT_VAL(0x806c);
+	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+	       pcie->base + PCIE_CFG_ADDR);
+	writel(val, pcie->base + PCIE_CFG_DATA);
+
+	/* configure RC FTS number to 250 when it leaves L0s */
+	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
+	       pcie->base + PCIE_CFG_ADDR);
+	val = readl(pcie->base + PCIE_CFG_DATA);
+	val &= ~PCIE_FTS_NUM_MASK;
+	val |= PCIE_FTS_NUM_L0(0x50);
+	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
+	       pcie->base + PCIE_CFG_ADDR);
+	writel(val, pcie->base + PCIE_CFG_DATA);
+
+	return 0;
 }
 
 static void
@@ -394,7 +461,9 @@ mtk_pcie_probe()
 
 	mtk_pcie_fill_port(pcie0);
 
-	mtk_pcie_preinit(pcie0);
+	//mtk_pcie_preinit(pcie0);
+	mtk_foreach_port(port)
+		mtk_pcie_startup_port(port)
 
 	return 0;
 }
