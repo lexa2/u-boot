@@ -190,4 +190,12 @@ config MT76X8_USB_PHY
 
 	  This PHY is found on MT76x8 devices supporting USB.
 
+config MEDIATEK_PHY
+	bool "MediaTek PHY support"
+	depends on PHY
+	help
+          Support the PHY in SoCs
+
+	  This PHY is found on MT devices supporting PCIe.
+
 endmenu
