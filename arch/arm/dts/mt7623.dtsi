@@ -303,7 +303,7 @@
 					IRQ_TYPE_LEVEL_LOW>;
 			ranges;
 			num-lanes = <1>;
-			status = "okay";
+			status = "disabled";
 		};
 
 		pcie@1,0 {
@@ -317,7 +317,7 @@
 					IRQ_TYPE_LEVEL_LOW>;
 			ranges;
 			num-lanes = <1>;
-			status = "okay";
+			status = "disabled";
 		};
 
 		pcie@2,0 {
@@ -331,7 +331,7 @@
 					IRQ_TYPE_LEVEL_LOW>;
 			ranges;
 			num-lanes = <1>;
-			status = "okay";
+			status = "disabled";
 		};
 	};
 
