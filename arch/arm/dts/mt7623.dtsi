@@ -282,10 +282,9 @@
 			 <&hifsys HIFSYS_PCIE1_RST>,
 			 <&hifsys HIFSYS_PCIE2_RST>;
 		reset-names = "pcie-rst0", "pcie-rst1", "pcie-rst2";
-//		phys = <&pcie0_port PHY_TYPE_PCIE>,
-//		       <&pcie1_port PHY_TYPE_PCIE>,
-//		       <&u3port1 PHY_TYPE_PCIE>;
-		phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
+		phys = <&pcie0_phy>,
+		       <&pcie1_phy>;
+		phy-names = "pcie-phy0", "pcie-phy1";
 		power-domains = <&scpsys MT7623_POWER_DOMAIN_HIF>;
 		bus-range = <0x00 0xff>;
 		status = "okay";
@@ -341,8 +340,8 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
+		#phy-cells = <0>;
 		status = "disabled";
-
 		pcie0_port: pcie-phy@1a149900 {
 			reg = <0x1a149900 0x0700>;
 			clocks = <&clk26m>;
@@ -358,6 +357,7 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
+		#phy-cells = <0>;
 		status = "disabled";
 
 		pcie1_port: pcie-phy@1a14a900 {

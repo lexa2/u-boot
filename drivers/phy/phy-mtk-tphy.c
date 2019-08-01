@@ -29,11 +29,13 @@ static const struct phy_ops mtk_phy_ops = {
 
 static int mtk_phy_probe(struct udevice *dev)
 {
+	printk(KERN_ALERT "DEBUG: probing TPHY %s %d \n",__FUNCTION__,__LINE__);
 	return 0;
 }
 
 static int mtk_phy_remove(struct udevice *dev)
 {
+	printk(KERN_ALERT "DEBUG: removing TPHY %s %d \n",__FUNCTION__,__LINE__);
 	return 0;
 }
 
