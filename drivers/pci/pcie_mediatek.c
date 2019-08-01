@@ -169,7 +169,7 @@ static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
 static void mtk_pcie_enable_port(struct mtk_pcie_port *port)
 {
     int err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     err = clk_enable(&port->sys_ck);
     if (err)
         goto exit;
@@ -181,7 +181,7 @@ static void mtk_pcie_enable_port(struct mtk_pcie_port *port)
     err = reset_deassert(&port->reset);
     if (err)
         goto exit;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     err = generic_phy_init(&port->phy);
     if (err)
         goto exit;
@@ -189,7 +189,7 @@ static void mtk_pcie_enable_port(struct mtk_pcie_port *port)
     err = generic_phy_power_on(&port->phy);
     if (err)
         goto exit;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     if (!mtk_pcie_startup_port(port))
         return;
 
@@ -204,35 +204,35 @@ static int mtk_pcie_parse_port(struct udevice *dev, u32 slot)
     struct mtk_pcie_port *port;
     char name[10];
     int err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
     if (!port)
         return -ENOMEM;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     snprintf(name, sizeof(name), "port%d", slot);
     port->base = dev_remap_addr_name(dev, name);
     if (!port->base)
         return -ENOENT;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     snprintf(name, sizeof(name), "sys_ck%d", slot);
     err = clk_get_by_name(dev, name, &port->sys_ck);
     if (err)
         return err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d %lu,%lu,%lu\n",__FUNCTION__,__LINE__,  *(&port->reset.id),*(&port->reset.data),*(&port->reset.polarity));
     err = reset_get_by_index(dev, slot, &port->reset);
     if (err)
         return err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     err = generic_phy_get_by_index(dev, slot, &port->phy);
     if (err)
         return err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     port->slot = slot;
     port->pcie = pcie;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     INIT_LIST_HEAD(&port->list);
     list_add_tail(&port->list, &pcie->ports);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     return 0;
 }
 
@@ -244,42 +244,49 @@ static int mtk_pcie_probe(struct udevice *dev)
     int err;
 
     INIT_LIST_HEAD(&pcie->ports);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     pcie->base = dev_remap_addr_name(dev, "subsys");
     if (!pcie->base)
         return -ENOENT;
+
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 
     err = clk_get_by_name(dev, "free_ck", &pcie->free_ck);
     if (err)
         return err;
 
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     /* enable top level clock */
     err = clk_enable(&pcie->free_ck);
     if (err)
         return err;
 
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
     dev_for_each_subnode(subnode, dev) {
         struct fdt_pci_addr addr;
         u32 slot = 0;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
         if (!ofnode_is_available(subnode))
             continue;
+
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 
         err = ofnode_read_pci_addr(subnode, 0, "reg", &addr);
         if (err)
             return err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
         slot = PCI_DEV(addr.phys_hi);
 
         err = mtk_pcie_parse_port(dev, slot);
         if (err)
             return err;
     }
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     /* enable each port, and then check link status */
     list_for_each_entry_safe(port, tmp, &pcie->ports, list)
         mtk_pcie_enable_port(port);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
     return 0;
 }
 
