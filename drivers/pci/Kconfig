@@ -148,7 +148,7 @@ config PCI_MVEBU
 config PCIE_MEDIATEK
 	bool "Mediatek PCI-E"
 	help
-	  Say Y here if you want to enable PCIe controller (mt2701)
-	  support on Mediatek MT7623
+	  Say Y here if you want to enable PCIe controller support on
+	  Mediatek MT7623
 
 endif
