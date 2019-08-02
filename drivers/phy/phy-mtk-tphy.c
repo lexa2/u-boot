@@ -229,12 +229,11 @@ static int mtk_phy_init(struct phy *phy)
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
 	//int ret;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	//ret = 
 	clk_enable(&instance->ref_clk);
 //	if (ret)
 //		return ret;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	switch (instance->type) {
 	case PHY_TYPE_PCIE:
 		pcie_phy_instance_init(tphy, instance);
@@ -242,7 +241,7 @@ printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	default:
 		return -EINVAL;
 	}
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	return 0;
 }
 
@@ -250,9 +249,9 @@ static int mtk_phy_power_on(struct phy *phy)
 {
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	pcie_phy_instance_power_on(tphy, instance);
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	return 0;
 }
 
@@ -260,9 +259,9 @@ static int mtk_phy_power_off(struct phy *phy)
 {
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	pcie_phy_instance_power_off(tphy, instance);
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	return 0;
 }
 
@@ -270,9 +269,9 @@ static int mtk_phy_exit(struct phy *phy)
 {
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	clk_disable(&instance->ref_clk);
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	return 0;
 }
 
@@ -283,7 +282,6 @@ static int mtk_phy_xlate(struct phy *phy,
 	struct mtk_phy_instance *instance = NULL;
 	const struct device_node *phy_np = ofnode_to_np(args->node);
 	u32 index;
-	int i;
 
 	if (!phy_np) {
 		dev_err(phy->dev, "null pointer phy node\n");
@@ -300,12 +298,12 @@ static int mtk_phy_xlate(struct phy *phy,
 			instance = tphy->phys[index];
 			break;
 		}
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	if (!instance) {
 		dev_err(phy->dev, "failed to find appropriate phy\n");
 		return -EINVAL;
 	}
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	phy->id = index;
 	for (i=0;i < args->args_count;i++) {
 		printk(KERN_ALERT "DEBUG: Passed %s %d arg#%d=%d\n",__FUNCTION__,__LINE__,i,args->args[i]);
@@ -318,9 +316,9 @@ printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		dev_err(phy->dev, "unsupported device type: %d\n", instance->type);
 		return -EINVAL;
 	}
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	phy_v1_banks_init(tphy, instance);
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	return 0;
 }
 
@@ -354,26 +352,26 @@ static int mtk_tphy_probe(struct udevice *dev)
 		struct mtk_phy_instance *instance;
 		fdt_addr_t addr;
 		int err;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 		instance = devm_kzalloc(dev, sizeof(*instance), GFP_KERNEL);
 		if (!instance)
 			return -ENOMEM;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 		addr = ofnode_get_addr(subnode);
 		if (addr == FDT_ADDR_T_NONE)
 			return -ENOMEM;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 		instance->port_base = map_sysmem(addr, 0);
 		instance->index = index;
 		instance->np = ofnode_to_np(subnode);
 		tphy->phys[index] = instance;
 		index++;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 		err = clk_get_by_index_nodev(subnode, 0, &instance->ref_clk);
 		if (err)
 			return err;
 	}
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	return 0;
 }
 
