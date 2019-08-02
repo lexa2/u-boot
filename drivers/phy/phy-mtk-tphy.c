@@ -309,7 +309,7 @@ printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	for (i=0;i < args->args_count;i++) {
 		printk(KERN_ALERT "DEBUG: Passed %s %d arg#%d=%d\n",__FUNCTION__,__LINE__,i,args->args[i]);
 	}
-	instance->type = args->args[0];
+	instance->type = args->args[1];
 	if (!(instance->type == PHY_TYPE_USB2 ||
 	      instance->type == PHY_TYPE_USB3 ||
 	      instance->type == PHY_TYPE_PCIE ||
