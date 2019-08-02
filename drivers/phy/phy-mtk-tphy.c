@@ -305,7 +305,7 @@ static int mtk_phy_xlate(struct phy *phy,
 	}
 
 	phy->id = index;
-	instance->type = args->args[0];
+	instance->type = args->args[1];
 	if (!(instance->type == PHY_TYPE_USB2 ||
 	      instance->type == PHY_TYPE_USB3 ||
 	      instance->type == PHY_TYPE_PCIE ||
