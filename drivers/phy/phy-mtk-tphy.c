@@ -228,11 +228,12 @@ static int mtk_phy_init(struct phy *phy)
 {
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
-	int ret;
+	//int ret;
 printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
-	ret = clk_enable(&instance->ref_clk);
-	if (ret)
-		return ret;
+	//ret = 
+	clk_enable(&instance->ref_clk);
+//	if (ret)
+//		return ret;
 printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	switch (instance->type) {
 	case PHY_TYPE_PCIE:
