@@ -4,6 +4,7 @@
  * Written by Jean-Jacques Hiblot  <jjhiblot@ti.com>
  */
 
+#define DEBUG	1
 #include <common.h>
 #include <dm.h>
 #include <generic-phy.h>
@@ -51,6 +52,11 @@ int generic_phy_get_by_index(struct udevice *dev, int index,
 		return ret;
 	}
 
+	    if (ofnode_is_np(args.node)) {
+        const struct device_node *np = ofnode_to_np(args.node);
+
+	printf("get dev by ofnode: %s\n",np->name);
+}
 	ret = uclass_get_device_by_ofnode(UCLASS_PHY, args.node, &phydev);
 	if (ret) {
 		debug("%s: uclass_get_device_by_ofnode failed: err=%d\n",
