@@ -288,7 +288,7 @@ static int mtk_phy_xlate(struct phy *phy,
 		return -EINVAL;
 	}
 
-	if (args->args_count != 1) {
+	if (args->args_count < 1) {
 		dev_err(phy->dev, "invalid number of cells in 'phy' property\n");
 		return -EINVAL;
 	}
