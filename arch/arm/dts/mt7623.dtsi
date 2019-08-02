@@ -333,7 +333,7 @@
 		status = "disabled";
 
 		pcie0_port: pcie-phy@1a149900 {
-			reg = <0 0x1a149900 0 0x0700>;
+			reg = <0x1a149900 0x0700>;
 			clocks = <&clk26m>;
 			clock-names = "ref";
 			#phy-cells = <1>;
