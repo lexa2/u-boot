@@ -73,7 +73,7 @@ static int mtk_pcie_config_address(struct udevice *udev, pci_dev_t bdf,
 
 	writel(PCIE_CONF_ADDR(offset, bdf), pcie->base + PCIE_CFG_ADDR);
 	*paddress = pcie->base + PCIE_CFG_DATA + (offset & 3);
-
+printf ("mtk_pcie_config_address: offset:0x%x,func:0x%x,dev:0x%x,bus:0x%x",offset, PCI_FUNC(bdf), PCI_DEV(bdf), PCI_BUS(bdf));
 	return 0;
 }
 

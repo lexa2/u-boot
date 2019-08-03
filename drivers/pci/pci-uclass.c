@@ -4,6 +4,7 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
+#define DEBUG	1
 #include <common.h>
 #include <dm.h>
 #include <errno.h>
@@ -760,7 +761,7 @@ int pci_bind_bus_devices(struct udevice *bus)
 	pci_dev_t bdf, end;
 	bool found_multi;
 	int ret;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	found_multi = false;
 	end = PCI_BDF(bus->seq, PCI_MAX_PCI_DEVICES - 1,
 		      PCI_MAX_PCI_FUNCTIONS - 1);
@@ -789,7 +790,7 @@ int pci_bind_bus_devices(struct udevice *bus)
 
 		if (!PCI_FUNC(bdf))
 			found_multi = header_type & 0x80;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		debug("%s: bus %d/%s: found device %x, function %d\n", __func__,
 		      bus->seq, bus->name, PCI_DEV(bdf), PCI_FUNC(bdf));
 		pci_bus_read_config(bus, bdf, PCI_DEVICE_ID, &device,
@@ -800,7 +801,7 @@ int pci_bind_bus_devices(struct udevice *bus)
 
 		/* Find this device in the device tree */
 		ret = pci_bus_find_devfn(bus, PCI_MASK_BUS(bdf), &dev);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		/* If nothing in the device tree, bind a device */
 		if (ret == -ENODEV) {
 			struct pci_device_id find_id;
@@ -824,7 +825,7 @@ int pci_bind_bus_devices(struct udevice *bus)
 			continue;
 		else if (ret)
 			return ret;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		/* Update the platform data */
 		pplat = dev_get_parent_platdata(dev);
 		pplat->devfn = PCI_MASK_BUS(bdf);
@@ -832,7 +833,7 @@ int pci_bind_bus_devices(struct udevice *bus)
 		pplat->device = device;
 		pplat->class = class;
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	return 0;
 error:
 	printf("Cannot read bus configuration: %d\n", ret);
@@ -848,23 +849,24 @@ static void decode_regions(struct pci_controller *hose, ofnode parent_node,
 	const u32 *prop;
 	int len;
 	int i;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	prop = ofnode_get_property(node, "ranges", &len);
 	if (!prop) {
 		debug("%s: Cannot decode regions\n", __func__);
 		return;
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	pci_addr_cells = ofnode_read_simple_addr_cells(node);
 	addr_cells = ofnode_read_simple_addr_cells(parent_node);
 	size_cells = ofnode_read_simple_size_cells(node);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* PCI addresses are always 3-cells */
 	len /= sizeof(u32);
 	cells_per_record = pci_addr_cells + addr_cells + size_cells;
 	hose->region_count = 0;
 	debug("%s: len=%d, cells_per_record=%d\n", __func__, len,
 	      cells_per_record);
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	for (i = 0; i < MAX_PCI_REGIONS; i++, len -= cells_per_record) {
 		u64 pci_addr, addr, size;
 		int space_code;
@@ -892,13 +894,13 @@ static void decode_regions(struct pci_controller *hose, ofnode parent_node,
 		} else {
 			continue;
 		}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		if (!IS_ENABLED(CONFIG_SYS_PCI_64BIT) &&
 		    type == PCI_REGION_MEM && upper_32_bits(pci_addr)) {
 			debug(" - beyond the 32-bit boundary, ignoring\n");
 			continue;
 		}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		pos = -1;
 		for (i = 0; i < hose->region_count; i++) {
 			if (hose->regions[i].flags == type)
@@ -909,20 +911,20 @@ static void decode_regions(struct pci_controller *hose, ofnode parent_node,
 		debug(" - type=%d, pos=%d\n", type, pos);
 		pci_set_region(hose->regions + pos, pci_addr, addr, size, type);
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* Add a region for our local memory */
 #ifdef CONFIG_NR_DRAM_BANKS
 	bd_t *bd = gd->bd;
 
 	if (!bd)
 		return;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	for (i = 0; i < CONFIG_NR_DRAM_BANKS; ++i) {
 		if (hose->region_count == MAX_PCI_REGIONS) {
 			pr_err("maximum number of regions parsed, aborting\n");
 			break;
 		}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		if (bd->bi_dram[i].size) {
 			pci_set_region(hose->regions + hose->region_count++,
 				       bd->bi_dram[i].start,
@@ -944,7 +946,7 @@ static void decode_regions(struct pci_controller *hose, ofnode parent_node,
 		pci_set_region(hose->regions + hose->region_count++, base,
 			base, size, PCI_REGION_MEM | PCI_REGION_SYS_MEMORY);
 #endif
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	return;
 }
 
@@ -955,39 +957,41 @@ static int pci_uclass_pre_probe(struct udevice *bus)
 	debug("%s, bus=%d/%s, parent=%s\n", __func__, bus->seq, bus->name,
 	      bus->parent->name);
 	hose = bus->uclass_priv;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* For bridges, use the top-level PCI controller */
 	if (!device_is_on_pci_bus(bus)) {
 		hose->ctlr = bus;
 		decode_regions(hose, dev_ofnode(bus->parent), dev_ofnode(bus));
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	} else {
 		struct pci_controller *parent_hose;
 
 		parent_hose = dev_get_uclass_priv(bus->parent);
 		hose->ctlr = parent_hose->bus;
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	}
 	hose->bus = bus;
 	hose->first_busno = bus->seq;
 	hose->last_busno = bus->seq;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	return 0;
 }
 
 static int pci_uclass_post_probe(struct udevice *bus)
 {
 	int ret;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	debug("%s: probing bus %d\n", __func__, bus->seq);
 	ret = pci_bind_bus_devices(bus);
 	if (ret)
 		return ret;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 #ifdef CONFIG_PCI_PNP
 	ret = pci_auto_config_devices(bus);
 	if (ret < 0)
 		return ret;
 #endif
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 #if defined(CONFIG_X86) && defined(CONFIG_HAVE_FSP)
 	/*
 	 * Per Intel FSP specification, we should call FSP notify API to
@@ -1004,11 +1008,12 @@ static int pci_uclass_post_probe(struct udevice *bus)
 	 */
 	if ((gd->flags & GD_FLG_RELOC) && (bus->seq == 0)) {
 		ret = fsp_init_phase_pci();
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		if (ret)
 			return ret;
 	}
 #endif
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	return 0;
 }
 
