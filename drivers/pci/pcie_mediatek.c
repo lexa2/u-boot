@@ -159,7 +159,7 @@ printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, slot), pcie->base + PCIE_CFG_ADDR);
 	writel(val, pcie->base + PCIE_CFG_DATA);
 
-printk(KERN_ALERT "DEBUG: Passed %s %d (ret 0,p:%d,s:%d) \n",__FUNCTION__,__LINE__,port,slot);
+printk(KERN_ALERT "DEBUG: Passed %s %d (ret 0,s:%d) \n",__FUNCTION__,__LINE__,slot);
 
 	return 0;
 }
