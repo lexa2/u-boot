@@ -249,7 +249,7 @@ static int mtk_phy_power_on(struct phy *phy)
 {
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
-
+printk(KERN_ALERT "DEBUG: Passed %s %d phy-id:0x%lx\n",__FUNCTION__,__LINE__,phy->id);
 	pcie_phy_instance_power_on(tphy, instance);
 
 	return 0;
