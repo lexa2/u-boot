@@ -38,7 +38,7 @@ static int mediatek_reset_assert(struct reset_ctl *reset_ctl)
 		return -EINVAL;
 
 	return regmap_update_bits(priv->regmap,
-		priv->regofs + ((id / 32) << 2), BIT(id % 32), BIT(id % 32));
+		priv->regofs + ((id / 32) << 2), BIT(id % 32), ~0);
 }
 
 static int mediatek_reset_deassert(struct reset_ctl *reset_ctl)
