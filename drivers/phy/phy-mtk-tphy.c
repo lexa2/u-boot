@@ -228,11 +228,8 @@ static int mtk_phy_init(struct phy *phy)
 {
 	struct mtk_tphy *tphy = dev_get_priv(phy->dev);
 	struct mtk_phy_instance *instance = tphy->phys[phy->id];
-	int ret;
 
-	ret = clk_enable(&instance->ref_clk);
-	if (ret)
-		return ret;
+	clk_enable(&instance->ref_clk);
 
 	switch (instance->type) {
 	case PHY_TYPE_PCIE:
