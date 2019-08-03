@@ -38,12 +38,8 @@
 #define PCIE_CLASS_CODE		(0x60400 << 8)
 #define PCIE_CONF_REG(regn)	(((regn) & GENMASK(7, 2)) | \
 				((((regn) >> 8) & GENMASK(3, 0)) << 24))
-#define PCIE_CONF_FUN(fun)	(((fun) << 8) & GENMASK(10, 8))
-#define PCIE_CONF_DEV(dev)	(((dev) << 11) & GENMASK(15, 11))
-#define PCIE_CONF_BUS(bus)	(((bus) << 16) & GENMASK(23, 16))
-#define PCIE_CONF_ADDR(regn, fun, dev, bus) \
-				(PCIE_CONF_REG(regn) | PCIE_CONF_FUN(fun) | \
-				PCIE_CONF_DEV(dev) | PCIE_CONF_BUS(bus))
+#define PCIE_CONF_ADDR(regn, bdf) \
+				(PCIE_CONF_REG(regn) | (bdf))
 
 /* MediaTek specific configuration registers */
 #define PCIE_FTS_NUM		0x70c
@@ -75,8 +71,7 @@ static int mtk_pcie_config_address(struct udevice *udev, pci_dev_t bdf,
 {
 	struct mtk_pcie *pcie = dev_get_priv(udev);
 
-	writel(PCIE_CONF_ADDR(offset, PCI_FUNC(bdf), PCI_DEV(bdf),
-			      PCI_BUS(bdf)), pcie->base + PCIE_CFG_ADDR);
+	writel(PCIE_CONF_ADDR(offset, bdf), pcie->base + PCIE_CFG_ADDR);
 	*paddress = pcie->base + PCIE_CFG_DATA + (offset & 3);
 
 	return 0;
@@ -112,34 +107,31 @@ static void mtk_pcie_port_free(struct mtk_pcie_port *port)
 static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
 {
 	struct mtk_pcie *pcie = port->pcie;
-	u32 func = PCI_FUNC(port->slot << 11);
 	u32 slot = PCI_DEV(port->slot << 11);
 	u32 val;
 	int err;
-printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	/* assert port PERST_N */
 	val = readl(pcie->base + PCIE_SYS_CFG);
 	val |= PCIE_PORT_PERST(port->slot);
 	writel(val, pcie->base + PCIE_SYS_CFG);
-printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
+
 	/* de-assert port PERST_N */
 	val = readl(pcie->base + PCIE_SYS_CFG);
 	val &= ~PCIE_PORT_PERST(port->slot);
 	writel(val, pcie->base + PCIE_SYS_CFG);
-printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
+
 	/* 100ms timeout value should be enough for Gen1/2 training */
 	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS, val,
 				 !!(val & PCIE_PORT_LINKUP), 100000);
 	if (err)
 		return -ETIMEDOUT;
 
-printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
 	/* enable interrupt */
 	val = readl(pcie->base + PCIE_INT_ENABLE);
-	val |= PCIE_PORT_INT_EN(port->slot);
+	val &= ~PCIE_PORT_INT_EN(port->slot);
 	writel(val, pcie->base + PCIE_INT_ENABLE);
 
-printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
 	/* map to all DDR region. We need to set it before cfg operation. */
 	writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
 	       port->base + PCIE_BAR0_SETUP);
@@ -148,29 +140,23 @@ printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
 	writel(PCIE_CLASS_CODE | PCIE_REVISION_ID, port->base + PCIE_CLASS);
 
 	/* configure FC credit */
-	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, slot),
 	       pcie->base + PCIE_CFG_ADDR);
 	val = readl(pcie->base + PCIE_CFG_DATA);
 	val &= ~PCIE_FC_CREDIT_MASK;
 	val |= PCIE_FC_CREDIT_VAL(0x806c);
-printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
-	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, func, slot, 0),
+	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, slot),
 	       pcie->base + PCIE_CFG_ADDR);
 	writel(val, pcie->base + PCIE_CFG_DATA);
 
-printk(KERN_ALERT "DEBUG: Passed %s %d\n",__FUNCTION__,__LINE__);
 	/* configure RC FTS number to 250 when it leaves L0s */
-	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
-	       pcie->base + PCIE_CFG_ADDR);
+	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, slot), pcie->base + PCIE_CFG_ADDR);
 	val = readl(pcie->base + PCIE_CFG_DATA);
 	val &= ~PCIE_FTS_NUM_MASK;
 	val |= PCIE_FTS_NUM_L0(0x50);
-printk(KERN_ALERT "DEBUG: Passed %s %d val:%x\n",__FUNCTION__,__LINE__,val);
-	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, func, slot, 0),
-	       pcie->base + PCIE_CFG_ADDR);
+	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, slot), pcie->base + PCIE_CFG_ADDR);
 	writel(val, pcie->base + PCIE_CFG_DATA);
 
-printk(KERN_ALERT "DEBUG: Passed %s %d\n",__FUNCTION__,__LINE__);
 	return 0;
 }
 
