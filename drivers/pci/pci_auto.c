@@ -7,6 +7,7 @@
  * Copyright 2000 MontaVista Software Inc.
  */
 
+#define DEBUG	1
 #include <common.h>
 #include <dm.h>
 #include <errno.h>
@@ -37,19 +38,20 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 	cmdstat = (cmdstat & ~(PCI_COMMAND_IO | PCI_COMMAND_MEMORY)) |
 			PCI_COMMAND_MASTER;
 
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	for (bar = PCI_BASE_ADDRESS_0;
 	     bar < PCI_BASE_ADDRESS_0 + (bars_num * 4); bar += 4) {
 		/* Tickle the BAR and get the response */
 		if (!enum_only)
 			dm_pci_write_config32(dev, bar, 0xffffffff);
 		dm_pci_read_config32(dev, bar, &bar_response);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		/* If BAR is not implemented go to the next BAR */
 		if (!bar_response)
 			continue;
 
 		found_mem64 = 0;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		/* Check the BAR type and set our address mask */
 		if (bar_response & PCI_BASE_ADDRESS_SPACE) {
 			bar_size = ((~(bar_response & PCI_BASE_ADDRESS_IO_MASK))
@@ -64,14 +66,14 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 			     PCI_BASE_ADDRESS_MEM_TYPE_64) {
 				u32 bar_response_upper;
 				u64 bar64;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 				if (!enum_only) {
 					dm_pci_write_config32(dev, bar + 4,
 							      0xffffffff);
 				}
 				dm_pci_read_config32(dev, bar + 4,
 						     &bar_response_upper);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 				bar64 = ((u64)bar_response_upper << 32) |
 						bar_response;
 
@@ -102,7 +104,7 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 							  found_mem64) == 0) {
 			/* Write it out and update our limit */
 			dm_pci_write_config32(dev, bar, (u32)bar_value);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 			if (found_mem64) {
 				bar += 4;
 #ifdef CONFIG_SYS_PCI_64BIT
@@ -118,7 +120,7 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 #endif
 			}
 		}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 		cmdstat |= (bar_response & PCI_BASE_ADDRESS_SPACE) ?
 			PCI_COMMAND_IO : PCI_COMMAND_MEMORY;
 
@@ -126,7 +128,7 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 
 		bar_nr++;
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	if (!enum_only) {
 		/* Configure the expansion ROM address */
 		dm_pci_read_config8(dev, PCI_HEADER_TYPE, &header_type);
@@ -136,6 +138,7 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 				PCI_ROM_ADDRESS : PCI_ROM_ADDRESS1;
 			dm_pci_write_config32(dev, rom_addr, 0xfffffffe);
 			dm_pci_read_config32(dev, rom_addr, &bar_response);
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 			if (bar_response) {
 				bar_size = -(bar_response & ~1);
 				debug("PCI Autoconfig: ROM, size=%#x, ",
@@ -151,7 +154,7 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 			}
 		}
 	}
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* PCI_COMMAND_IO must be set for VGA device */
 	dm_pci_read_config16(dev, PCI_CLASS_DEVICE, &class);
 	if (class == PCI_CLASS_DISPLAY_VGA)
@@ -161,6 +164,7 @@ void dm_pciauto_setup_device(struct udevice *dev, int bars_num,
 	dm_pci_write_config8(dev, PCI_CACHE_LINE_SIZE,
 			     CONFIG_SYS_PCI_CACHE_LINE_SIZE);
 	dm_pci_write_config8(dev, PCI_LATENCY_TIMER, 0x80);
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 }
 
 void dm_pciauto_prescan_setup_bridge(struct udevice *dev, int sub_bus)
