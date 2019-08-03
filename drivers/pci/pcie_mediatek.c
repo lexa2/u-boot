@@ -110,28 +110,30 @@ static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
 	u32 slot = PCI_DEV(port->slot << 11);
 	u32 val;
 	int err;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* assert port PERST_N */
 	val = readl(pcie->base + PCIE_SYS_CFG);
 	val |= PCIE_PORT_PERST(port->slot);
 	writel(val, pcie->base + PCIE_SYS_CFG);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* de-assert port PERST_N */
 	val = readl(pcie->base + PCIE_SYS_CFG);
 	val &= ~PCIE_PORT_PERST(port->slot);
 	writel(val, pcie->base + PCIE_SYS_CFG);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* 100ms timeout value should be enough for Gen1/2 training */
 	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS, val,
 				 !!(val & PCIE_PORT_LINKUP), 100000);
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
+
 	if (err)
 		return -ETIMEDOUT;
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* enable interrupt */
 	val = readl(pcie->base + PCIE_INT_ENABLE);
 	val &= ~PCIE_PORT_INT_EN(port->slot);
 	writel(val, pcie->base + PCIE_INT_ENABLE);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* map to all DDR region. We need to set it before cfg operation. */
 	writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
 	       port->base + PCIE_BAR0_SETUP);
@@ -148,7 +150,7 @@ static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
 	writel(PCIE_CONF_ADDR(PCIE_FC_CREDIT, slot),
 	       pcie->base + PCIE_CFG_ADDR);
 	writel(val, pcie->base + PCIE_CFG_DATA);
-
+printk(KERN_ALERT "DEBUG: Passed %s %d \n",__FUNCTION__,__LINE__);
 	/* configure RC FTS number to 250 when it leaves L0s */
 	writel(PCIE_CONF_ADDR(PCIE_FTS_NUM, slot), pcie->base + PCIE_CFG_ADDR);
 	val = readl(pcie->base + PCIE_CFG_DATA);
