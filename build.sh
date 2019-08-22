@@ -31,7 +31,9 @@ function upload {
 
 case $1 in
 	"build")
-		make LOCALVERSION="-$ubranch" 2> build.log;
+		LANG=C
+		CFLAGS=-j$(grep ^processor /proc/cpuinfo  | wc -l)
+		make LOCALVERSION="-$ubranch" ${CFLAGS} 2> build.log;
 		if [[ $? -eq 0 ]];then
 			FILESIZE=$(stat -c%s "u-boot.bin");
 			if [[ $FILESIZE -gt $MAXSIZE ]]; then
