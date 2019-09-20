@@ -69,6 +69,7 @@
 /tpl/
 
 /include/generated/
+/include/config
 /include/spl-autoconf.mk
 /include/tpl-autoconf.mk
 
