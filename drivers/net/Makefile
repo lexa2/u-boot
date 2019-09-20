@@ -5,6 +5,10 @@
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
+ifeq ($(CONFIG_RTL8367),y)
+EXTRA_CFLAGS += -Idrivers/net/rtl8367c/include
+endif
+
 obj-$(CONFIG_PPC4xx_EMAC) += 4xx_enet.o
 obj-$(CONFIG_ALTERA_TSE) += altera_tse.o
 obj-$(CONFIG_ARMADA100_FEC) += armada100_fec.o
@@ -63,3 +67,7 @@ obj-$(CONFIG_XILINX_EMACLITE) += xilinx_emaclite.o
 obj-$(CONFIG_XILINX_LL_TEMAC) += xilinx_ll_temac.o xilinx_ll_temac_mdio.o \
 		xilinx_ll_temac_fifo.o xilinx_ll_temac_sdma.o
 obj-$(CONFIG_ZYNQ_GEM) += zynq_gem.o
+obj-$(CONFIG_RT2880_ETH) += rt2880_eth.o
+obj-$(CONFIG_RT2880_ETH) += mii_mgr.o
+obj-$(CONFIG_RTL8367) += rtl8367c/
+obj-$(CONFIG_MT7531) += mt7531.o

@@ -189,7 +189,9 @@ static int netboot_common(enum proto_t proto, cmd_tbl_t *cmdtp, int argc,
 	if ((s = getenv("loadaddr")) != NULL) {
 		load_addr = simple_strtoul(s, NULL, 16);
 	}
-
+	/* set the default filesize to 0 before we to the real download */
+	setenv_hex("filesize", 0);
+	
 	switch (argc) {
 	case 1:
 		break;
@@ -242,6 +244,8 @@ static int netboot_common(enum proto_t proto, cmd_tbl_t *cmdtp, int argc,
 		bootstage_error(BOOTSTAGE_ID_NET_LOADED);
 		return 0;
 	}
+	setenv_hex("filesize", size);
+	printf("get filesize 0x%x\n",size);
 
 	/* flush cache */
 	flush_cache(load_addr, size);
@@ -280,6 +284,45 @@ static int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 U_BOOT_CMD(
 	ping,	2,	1,	do_ping,
 	"send ICMP ECHO_REQUEST to network host",
+	"pingAddress"
+);
+#endif
+
+#if defined(FW_UPGRADE_BY_WEBUI)
+static int do_http_upgrade(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+{
+	if (argc < 2)
+		return -1;
+
+	NetPingIP = string_to_ip(argv[1]);
+	if (NetPingIP == 0)
+		return CMD_RET_USAGE;
+
+	if (NetLoop(PING) < 0) {
+		printf("ping failed; host %s is not alive\n", argv[1]);
+		if (NetLoop(PING) < 0) {
+			printf("ping failed again; host %s is not alive!!!\n", argv[1]);
+		}else{
+			printf("host %s is alive\n", argv[1]);
+		}
+	}else {
+
+		printf("host %s is alive\n", argv[1]);
+	}
+
+	///////////////////////////////////////////////////////
+	char *s;
+	if ((s = getenv("loadaddr")) != NULL) {
+		load_addr = simple_strtoul(s, NULL, 16);
+	}
+	printf("load_addr = %x\n", load_addr);
+	uip_main();
+	return 0;
+}
+
+U_BOOT_CMD(
+	http_upgrade,	2,	1,	do_http_upgrade,
+	"http_upgrade",
 	"pingAddress"
 );
 #endif

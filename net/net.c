@@ -107,6 +107,8 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+int             NetUipLoop = 0;
+
 /** BOOTP EXTENTIONS **/
 
 /* Our subnet mask (0=unknown) */
@@ -966,6 +968,9 @@ NetReceive(uchar *inpkt, int len)
 	NetRxPacket = inpkt;
 	NetRxPacketLen = len;
 	et = (struct ethernet_hdr *)inpkt;
+
+        if (NetUipLoop == 1)
+                return;
 
 	/* too small packet? */
 	if (len < ETHER_HDR_SIZE)

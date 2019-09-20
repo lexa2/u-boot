@@ -97,6 +97,7 @@ libs-$(CONFIG_SPL_GPIO_SUPPORT) += drivers/gpio/
 libs-$(CONFIG_SPL_MMC_SUPPORT) += drivers/mmc/
 libs-$(CONFIG_SPL_MPC8XXX_INIT_DDR_SUPPORT) += drivers/ddr/fsl/
 libs-$(CONFIG_SPL_SERIAL_SUPPORT) += drivers/serial/
+libs-$(CONFIG_SPL_NOR_SUPPORT) += drivers/flash/
 libs-$(CONFIG_SPL_SPI_FLASH_SUPPORT) += drivers/mtd/spi/
 libs-$(CONFIG_SPL_SPI_SUPPORT) += drivers/spi/
 libs-y += fs/
@@ -133,7 +134,8 @@ libs-y := $(patsubst %/, %/built-in.o, $(libs-y))
 
 # Add GCC lib
 ifeq ("$(USE_PRIVATE_LIBGCC)", "yes")
-PLATFORM_LIBS := $(SPLTREE)/arch/$(ARCH)/lib/lib.a
+PLATFORM_LIBGCC = arch/$(ARCH)/lib/lib.a
+PLATFORM_LIBS := $(filter-out %/lib.a, $(filter-out -lgcc, $(PLATFORM_LIBS))) $(PLATFORM_LIBGCC)
 endif
 
 u-boot-spl-init := $(head-y)
@@ -168,16 +170,16 @@ LDPPFLAGS += \
 	$(shell $(LD) --version | \
 	  sed -ne 's/GNU ld version \([0-9][0-9]*\)\.\([0-9][0-9]*\).*/-DLD_MAJOR=\1 -DLD_MINOR=\2/p')
 
-$(OBJTREE)/MLO:	$(obj)/u-boot-spl.bin
-	$(OBJTREE)/tools/mkimage -T omapimage \
-		-a $(CONFIG_SPL_TEXT_BASE) -d $< $@
+quiet_cmd_mkimage = UIMAGE  $@
+cmd_mkimage = $(objtree)/tools/mkimage $(MKIMAGEFLAGS_$(@F)) -d $< $@ \
+	$(if $(KBUILD_VERBOSE:1=), >/dev/null)
 
-$(OBJTREE)/MLO.byteswap: $(obj)/u-boot-spl.bin
-	$(OBJTREE)/tools/mkimage -T omapimage -n byteswap \
-		-a $(CONFIG_SPL_TEXT_BASE) -d $< $@
+MKIMAGEFLAGS_MLO = -T omapimage -a $(CONFIG_SPL_TEXT_BASE)
 
-$(objtree)/SPL : $(obj)/u-boot-spl.bin
-		$(MAKE) $(build)=spl/arch/arm/imx-common $@
+MKIMAGEFLAGS_MLO.byteswap = -T omapimage -n byteswap -a $(CONFIG_SPL_TEXT_BASE)
+
+MLO MLO.byteswap: $(obj)/u-boot-spl.bin
+	$(call if_changed,mkimage)
 
 ALL-y	+= $(obj)/$(SPL_BIN).bin
 
@@ -199,8 +201,13 @@ $(obj)/$(BOARD)-spl.bin: $(obj)/u-boot-spl.bin
 	$(OBJTREE)/tools/mkexynosspl) $(VAR_SIZE_PARAM) $< $@
 endif
 
-$(obj)/$(SPL_BIN).bin:	$(obj)/$(SPL_BIN)
-	$(OBJCOPY) $(OBJCFLAGS) $(SPL_OBJCFLAGS) -O binary $< $@
+quiet_cmd_objcopy = OBJCOPY $@
+cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
+
+OBJCOPYFLAGS_$(SPL_BIN).bin = $(SPL_OBJCFLAGS) -O binary
+
+$(obj)/$(SPL_BIN).bin: $(obj)/$(SPL_BIN) FORCE
+	$(call if_changed,objcopy)
 
 LDFLAGS_$(SPL_BIN) += -T u-boot-spl.lds $(LDFLAGS_FINAL)
 ifneq ($(CONFIG_SPL_TEXT_BASE),)
@@ -225,8 +232,22 @@ $(u-boot-spl-dirs):
 # FIX ME
 cpp_flags := $(KBUILD_CPPFLAGS) $(CPPFLAGS) $(UBOOTINCLUDE) $(NOSTDINC_FLAGS)
 
+quiet_cmd_cpp_lds = LDS     $@
+cmd_cpp_lds = $(CPP) $(cpp_flags) $(LDPPFLAGS) -ansi -D__ASSEMBLY__ \
+		-x assembler-with-cpp -P -o $@ $<
+
 $(obj)/u-boot-spl.lds: $(LDSCRIPT) FORCE
-	$(CPP) $(cpp_flags) $(LDPPFLAGS) -I$(obj). -ansi -D__ASSEMBLY__ -P - < $< > $@
+	$(call if_changed,cpp_lds)
+
+# read all saved command lines
+
+targets := $(wildcard $(sort $(targets)))
+cmd_files := $(wildcard $(obj)/.*.cmd $(foreach f,$(targets),$(dir $(f)).$(notdir $(f)).cmd))
+
+ifneq ($(cmd_files),)
+  $(cmd_files): ;	# Do not try to update included dependency files
+  include $(cmd_files)
+endif
 
 PHONY += FORCE
 FORCE:
