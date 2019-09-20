@@ -202,26 +202,11 @@ VENDOR=
 
 # set default to nothing for native builds
 ifeq ($(HOSTARCH),$(ARCH))
-CROSS_COMPILE ?=
+CROSS_COMPILE ?=arm-linux-gnueabihf-
 endif
 
 # Mediatek proprietary menuconfig
 -include .config
-
-ifeq ($(MT7623), y)
-CROSS_COMPILE_PATH = /opt/buildroot-gcc492_arm/usr/bin
-CROSS_COMPILE = $(CROSS_COMPILE_PATH)/arm-linux-
-endif
-
-ifeq ($(MT7622), y)
-CROSS_COMPILE_PATH = /opt/buildroot-gcc492_arm/usr/bin
-CROSS_COMPILE = $(CROSS_COMPILE_PATH)/arm-linux-
-endif
-
-ifeq ($(MT7626), y)
-CROSS_COMPILE_PATH = /opt/buildroot-gcc492_arm/usr/bin
-CROSS_COMPILE = $(CROSS_COMPILE_PATH)/arm-linux-
-endif
 
 # SHELL used by kbuild
 CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
