@@ -407,17 +407,20 @@
 #define CONFIG_SYS_MMC_ENV_DEV              1
 
 /*BPI*/
-/* NAND Flash Configuration */
+/* NAND Flash Configuration */ //nand not used for sd
+/*
 #define CONFIG_SYS_MAX_NAND_DEVICE	        1	
 #define CONFIG_SYS_NAND_BASE                NFI_BASE
 #define CONFIG_SYS_MAX_FLASH_BANKS			1
 #define CONFIG_CMD_NAND
+*/
 //#define CONFIG_MTD_DEBUG	/* NOTE(Nelson): add debug logs */
 //#define CONFIG_MTD_DEBUG_VERBOSE  7
+/*
 #define CONFIG_CMD_MTDPARTS     1
 #define CONFIG_MTD_PARTITIONS   1
 #define CONFIG_MTD_NAND_VERIFY_WRITE            1
-
+*/
 #define ENV_BOOT_FROM_SD  \
     "boot5=mmc init; fatload mmc 0:1 0x84000000 uimage ; bootm\0"
 
