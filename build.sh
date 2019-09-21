@@ -1,12 +1,21 @@
 #!/bin/bash
-	CCVER=$(arm-linux-gnueabihf-gcc --version |grep arm| sed -e 's/^.* \([0-9]\.[0-9-]\).*$/\1/')
-	if [[ $CCVER =~ ^[789] ]]; then
-		echo "arm-linux-gnueabihf-gcc version 7+ currently not supported";exit 1;
-	fi
+CCVER=$(arm-linux-gnueabihf-gcc --version |grep arm| sed -e 's/^.* \([0-9]\.[0-9-]\).*$/\1/')
+if [[ $CCVER =~ ^[789] ]]; then
+	echo "arm-linux-gnueabihf-gcc version 7+ currently not supported";exit 1;
+fi
+
+LANG=C
+CFLAGS=-j$(grep ^processor /proc/cpuinfo  | wc -l)
+export CROSS_COMPILE='ccache arm-linux-gnueabihf-'
 
 case "$1" in
 	"config") make menuconfig;;
-	"build"|"") make;;
+	"build"|"")
+		exec 3> >(tee build.log)
+		make ${CFLAGS} 2>&3
+		ret=$?
+		exec 3>&-
+		;;
 	"install")
 		UBOOT=u-boot-mtk.bin
 		if [[ ! -e $UBOOT ]];then
