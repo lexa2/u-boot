@@ -315,7 +315,7 @@
 /**/
 #define CONFIG_CMD_MMC
 #define CONFIG_ENV_IS_IN_MMC
-#define CONFIG_ENV_SIZE                     SZ_4K
+#define CONFIG_ENV_SIZE                     SZ_8K
 #define CONFIG_ENV_OFFSET                   0x140000
 #define CONFIG_SYS_MMC_ENV_DEV              0
 #define CONFIG_SYS_MAX_FLASH_SECT           512
@@ -402,7 +402,7 @@
 /**/
 #define CONFIG_ENV_IS_IN_MMC
 #define CONFIG_ENV_IS_IN_SD
-#define CONFIG_ENV_SIZE                     SZ_4K
+#define CONFIG_ENV_SIZE                     SZ_8K
 #define CONFIG_ENV_OFFSET                   0x140000
 #define CONFIG_SYS_MMC_ENV_DEV              1
 
