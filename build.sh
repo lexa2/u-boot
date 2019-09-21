@@ -1,5 +1,6 @@
 #!/bin/bash
 CCVER=$(arm-linux-gnueabihf-gcc --version |grep arm| sed -e 's/^.* \([0-9]\.[0-9-]\).*$/\1/')
+echo "gcc-version (CROSS_COMPILE):"$CCVER
 if [[ $CCVER =~ ^[789] ]]; then
 	echo "arm-linux-gnueabihf-gcc version 7+ currently not supported";exit 1;
 fi
@@ -15,6 +16,18 @@ case "$1" in
 		make ${CFLAGS} 2>&3
 		ret=$?
 		exec 3>&-
+		ls -lh u-boot-mtk.bin
+		;;
+	"upload")
+		host=192.168.0.29
+		dir=/home/frank/Schreibtisch/
+		grep '^OFF_BOARD_SD_CARD_COMPONENT=y' .config;if [[ $? -eq 0 ]];then FLASH="SD";fi
+		grep '^ON_BOARD_EMMC_COMPONENT=y' .config;if [[ $? -eq 0 ]];then FLASH="EMMC";fi
+		grep '^CONFIG_RTL8367=y' .config;if [[ $? -eq 0 ]];then ETH="RTL8367";fi
+		grep '^CONFIG_MT7531=y' .config;if [[ $? -eq 0 ]];then ETH="MT7531";fi
+		filename=u-boot-mtk_r64_${FLASH,,}_${ETH,,}_gcc${CCVER}.bin
+		echo "uploading $filename to $host:$dir"
+		scp u-boot-mtk.bin $host:$dir/$filename
 		;;
 	"install")
 		UBOOT=u-boot-mtk.bin
