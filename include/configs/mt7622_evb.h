@@ -647,7 +647,7 @@
     "console=ttyS0,115200n1 earlyprintk\0" \
     "bootmenu_0=1. Reload Bootmenu=run reloadmenu\0" \
     "bootmenu_1=2. Load Kernel from TFTP.=run bootnet\0" \
-    "service=linux-4.19\0" \
+    "service=linux\0" \
     "scriptaddr=0x43000000\0" \
     "kaddr=0x44000000\0" \
     "dtaddr=0x47000000\0" \
