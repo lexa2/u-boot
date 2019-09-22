@@ -27,7 +27,7 @@
  **********************************************************************************************/
 #if 1
 /*
- *  Iverson 20140326 : 
+ *  Iverson 20140326 :
  *      We can disable dcache for accessing non-cachable address instead of using mmu page table to provide noncachable address.
  */
 /* Cache */
@@ -44,7 +44,7 @@
  **********************************************************************************************/
 /* Memory layout */
 /* DRAM definition */
-/* 
+/*
  * Iverson 20140521 : We detect ram size automatically.
  *      CONFIG_SYS_SDRAM_SIZE define max uboot size.
  *      The max size that auto detection support is 256MB.
@@ -56,7 +56,7 @@
 #define CONFIG_SYS_SDRAM_SIZE               SZ_64M
 #elif defined(ON_BOARD_1024Mb_DRAM_COMPONENT)
 #define CONFIG_SYS_SDRAM_SIZE               SZ_128M
-#elif defined(ON_BOARD_2048Mb_DRAM_COMPONENT) 
+#elif defined(ON_BOARD_2048Mb_DRAM_COMPONENT)
 #define CONFIG_SYS_SDRAM_SIZE               SZ_256M
 #elif defined(ON_BOARD_4096Mb_DRAM_COMPONENT)
 #define CONFIG_SYS_SDRAM_SIZE               SZ_512M
@@ -142,18 +142,18 @@
 #define CONFIG_ENV_OFFSET                   0xA0000
 
 #define CONFIG_NOR_PL_OFFSET               0x00000 //Preloader offset
-#define CONFIG_NOR_PL_SIZE                 0x40000 //Preloader max size 256K         
+#define CONFIG_NOR_PL_SIZE                 0x40000 //Preloader max size 256K
 
 #define CONFIG_NOR_ATF_OFFSET              0x40000 //ATF begin offset
 #define CONFIG_NOR_ATF_SIZE                0x20000 //ATF max size 128k
 
-#define CONFIG_NOR_UBOOT_OFFSET            0x60000 //Uboot offset 
+#define CONFIG_NOR_UBOOT_OFFSET            0x60000 //Uboot offset
 #define CONFIG_NOR_UBOOT_SIZE              0x40000 //Uboot max size 256k
 
-#define CONFIG_NOR_NVRAM_OFFSET            0xA0000 //NVRAM offset 
+#define CONFIG_NOR_NVRAM_OFFSET            0xA0000 //NVRAM offset
 #define CONFIG_NOR_NVRAM_SIZE              0x20000 //NVRAM max size 128k
 
-#define CONFIG_NOR_RF_OFFSET               0xC0000 //RF offset 
+#define CONFIG_NOR_RF_OFFSET               0xC0000 //RF offset
 #define CONFIG_NOR_RF_SIZE                 0x20000 //RF max size 128k
 
 
@@ -202,17 +202,17 @@
 #define ENV_WRITE_FLASHIMAGE \
 	"wr_flashimage=filesize_check " __stringify(CONFIG_NOR_FLASHIMAGE_SIZE) \
 	";if test ${filesize_result} = good; then snor erase " __stringify(CONFIG_NOR_FLASHIMAGE_OFFSET) " " __stringify(CONFIG_NOR_FLASHIMAGE_SIZE) \
-	";snor write ${loadaddr} " __stringify(CONFIG_NOR_FLASHIMAGE_OFFSET) " " __stringify(CONFIG_NOR_FLASHIMAGE_SIZE) ";fi\0" 
-	
+	";snor write ${loadaddr} " __stringify(CONFIG_NOR_FLASHIMAGE_OFFSET) " " __stringify(CONFIG_NOR_FLASHIMAGE_SIZE) ";fi\0"
+
 
 #elif defined(ON_BOARD_NAND_FLASH_COMPONENT) || \
       defined(ON_BOARD_SPI_NAND_FLASH_COMPONENT)
 #define CONFIG_SYS_NO_FLASH
 
 /* NAND Flash Configuration */
-#define CONFIG_SYS_MAX_NAND_DEVICE	        1	
+#define CONFIG_SYS_MAX_NAND_DEVICE	        1
 #define CONFIG_SYS_NAND_BASE                NFI_BASE
-#define CONFIG_SYS_MAX_FLASH_SECT			256	
+#define CONFIG_SYS_MAX_FLASH_SECT			256
 #define CONFIG_SYS_MAX_FLASH_BANKS			1
 #define CONFIG_CMD_NAND
 //#define CONFIG_MTD_DEBUG	/* NOTE(Nelson): add debug logs */
@@ -409,7 +409,7 @@
 /*BPI*/
 /* NAND Flash Configuration */ //nand not used for sd
 /*
-#define CONFIG_SYS_MAX_NAND_DEVICE	        1	
+#define CONFIG_SYS_MAX_NAND_DEVICE	        1
 #define CONFIG_SYS_NAND_BASE                NFI_BASE
 #define CONFIG_SYS_MAX_FLASH_BANKS			1
 #define CONFIG_CMD_NAND
@@ -557,9 +557,9 @@
  **********************************************************************************************/
 #if 1
 #if defined(MT7622_FPGA_BOARD)
-#define CONFIG_BOOTDELAY                    5
+	#define CONFIG_BOOTDELAY                    5
 #else
-#define CONFIG_BOOTDELAY                    0
+	#define CONFIG_BOOTDELAY                    0
 #endif
 #define CONFIG_BOOTCOMMAND                  "No"
 #define CONFIG_CMD_BOOTMENU
@@ -600,6 +600,7 @@
 #define ENV_BOOT_CMD10 \
     "boot10=download_setting flashimage;tftpboot ${loadaddr} ${flashimage_filename};run wr_flashimage;invaild_env\0"
 
+/* ********************************** SD/EMMC *******************************/
 #if defined(ON_BOARD_EMMC_COMPONENT) || defined(OFF_BOARD_SD_CARD_COMPONENT)
 
 #define ENV_BOOT_CMD11 \
@@ -617,19 +618,7 @@
     ENV_BOOT_READ_CTP \
     ENV_WRITE_FLASHIMAGE \
     ENV_WRITE_GPT \
-    ENV_BOOT_CMD0 \
-    ENV_BOOT_CMD1 \
-    ENV_BOOT_CMD2 \
-    ENV_BOOT_CMD3 \
-    ENV_BOOT_CMD4 \
-    ENV_BOOT_CMD5 \
-    ENV_BOOT_CMD6 \
-    ENV_BOOT_CMD7 \
-    ENV_BOOT_CMD8 \
-    ENV_BOOT_CMD9 \
-    ENV_BOOT_CMD10 \
-	ENV_BOOT_CMD11 \
-	ENV_BOOT_CMD12
+    ENV_BOOT_CMD12
 
 #define ENV_BOOT_MENU \
     "aload_fdt=fatload $device $partition $dtaddr ${bpi}/${board}/${service}/dtb/${fdt}\0" \
@@ -674,7 +663,7 @@
     "bootcmd=setenv bootdelay 5;run reloadmenu;\0" \
     "bootmenu_delay=3\0" \
     ""
-#else
+#else /* not SD/EMMC */
 
 #define ENV_BOOT_CMD \
     ENV_BOOT_WRITE_IMAGE \
@@ -714,7 +703,7 @@
     "bootmenu_delay=30\0" \
     ""
 
-#endif // ON_BOARD_EMMC_COMPONENT
+#endif // ON_BOARD_EMMC_COMPONENT || OFF_BOARD_SD (else)
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"fdt_high=0x6c000000\0" \
@@ -779,11 +768,11 @@
 /**********************************************************************************************
  *                                      Compression
  **********************************************************************************************/
-/* 
- * Iverson 20150510 :  
+/*
+ * Iverson 20150510 :
  *      Denali-2 use lk to decompress kernel.
  */
-#define CONFIG_LZMA                             
+#define CONFIG_LZMA
 #define CONFIG_MTGPIO
 
 #define CONFIG_AUTO_COMPLETE	1
