@@ -48,5 +48,12 @@ case "$1" in
 			sudo dd if=$UBOOT of=$dev bs=1k seek=768 #768k = 0xC0000
 			sync
 		fi
+		;;
+	"soc")
+		nano include/configs/mt7622_evb.h
+		;;
+	"umount")
+		umount /media/$USER/BPI-BOOT
+		umount /media/$USER/BPI-ROOT
 	;;
 esac
