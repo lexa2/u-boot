@@ -31,8 +31,9 @@ case "$1" in
 		;;
 	"install")
 		UBOOT=u-boot-mtk.bin
+		read -e -i "$UBOOT" -p "Please enter source file: " UBOOT
 		if [[ ! -e $UBOOT ]];then
-			echo "please build uboot first..."
+			echo "please build uboot first or set correct file..."
 			exit;
 		fi
 		dev=/dev/sdb
