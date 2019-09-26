@@ -9,6 +9,16 @@ LANG=C
 CFLAGS=-j$(grep ^processor /proc/cpuinfo  | wc -l)
 export CROSS_COMPILE='ccache arm-linux-gnueabihf-'
 
+function generate_filename
+{
+	grep '^OFF_BOARD_SD_CARD_COMPONENT=y' .config >/dev/null;if [[ $? -eq 0 ]];then FLASH="SD";fi
+	grep '^ON_BOARD_EMMC_COMPONENT=y' .config >/dev/null;if [[ $? -eq 0 ]];then FLASH="EMMC";fi
+	grep '^CONFIG_RTL8367=y' .config >/dev/null; if [[ $? -eq 0 ]];then ETH="RTL8367";fi
+	grep '^CONFIG_MT7531=y' .config >/dev/null;if [[ $? -eq 0 ]];then ETH="MT7531";fi
+	filename=u-boot-mtk_r64_${FLASH,,}_${ETH,,}_gcc${CCVER}.bin
+	echo $filename
+}
+
 case "$1" in
 	"config") make menuconfig;;
 	"build"|"")
@@ -23,13 +33,15 @@ case "$1" in
 		dir=/var/lib/tftp/
 		#host=192.168.0.29
 		#dir=/home/frank/Schreibtisch/
-		grep '^OFF_BOARD_SD_CARD_COMPONENT=y' .config;if [[ $? -eq 0 ]];then FLASH="SD";fi
-		grep '^ON_BOARD_EMMC_COMPONENT=y' .config;if [[ $? -eq 0 ]];then FLASH="EMMC";fi
-		grep '^CONFIG_RTL8367=y' .config;if [[ $? -eq 0 ]];then ETH="RTL8367";fi
-		grep '^CONFIG_MT7531=y' .config;if [[ $? -eq 0 ]];then ETH="MT7531";fi
-		filename=u-boot-mtk_r64_${FLASH,,}_${ETH,,}_gcc${CCVER}.bin
+		filename=$(generate_filename)
 		echo "uploading $filename to $host:$dir"
 		scp u-boot-mtk.bin $host:$dir/$filename
+		;;
+	"rename")
+		srcfile=u-boot-mtk.bin
+		filename=$(generate_filename)
+		echo "rename $srcfile to $filename"
+		mv u-boot-mtk.bin $filename
 		;;
 	"install")
 		UBOOT=u-boot-mtk.bin
