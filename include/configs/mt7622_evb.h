@@ -780,6 +780,5 @@
 #define CONFIG_CMD_ASKENV	1
 #define CONFIG_CMD_STRINGS	1
 #define CONFIG_CMD_SETEXPR	1
-#define CONFIG_CMD_CACHE	1
 
 #endif
