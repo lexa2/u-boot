@@ -104,11 +104,11 @@ PLATFORM_CPPFLAGS += $(call cc-option, -mword-relocations)
 endif
 
 # limit ourselves to the sections we want in the .bin.
-ifdef CONFIG_ARM64
-OBJCOPYFLAGS += -j .text -j .rodata -j .data -j .u_boot_list -j .rela.dyn
-else
-OBJCOPYFLAGS += -j .text -j .rodata -j .hash -j .data -j .got.plt -j .u_boot_list -j .rel.dyn
-endif
+#ifdef CONFIG_ARM64
+#OBJCOPYFLAGS += -j .text -j .rodata -j .data -j .u_boot_list -j .rela.dyn
+#else
+#OBJCOPYFLAGS += -j .text -j .rodata -j .hash -j .data -j .got.plt -j .u_boot_list -j .rel.dyn
+#endif
 
 ifneq ($(CONFIG_IMX_CONFIG),)
 ifdef CONFIG_SPL
