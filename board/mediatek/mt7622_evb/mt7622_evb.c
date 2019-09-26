@@ -34,6 +34,12 @@ int dram_init(void)
 	return 0;
 }
 
+void show_boot_progress(int val) {}
+
+void coloured_LED_init(void) {}
+
+void red_led_on(void) {}
+
 int board_init(void)
 {
     mtk_timer_init();
