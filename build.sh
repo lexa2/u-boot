@@ -19,8 +19,10 @@ case "$1" in
 		ls -lh u-boot-mtk.bin
 		;;
 	"upload")
-		host=192.168.0.29
-		dir=/home/frank/Schreibtisch/
+		host=192.168.0.10
+		dir=/var/lib/tftp/
+		#host=192.168.0.29
+		#dir=/home/frank/Schreibtisch/
 		grep '^OFF_BOARD_SD_CARD_COMPONENT=y' .config;if [[ $? -eq 0 ]];then FLASH="SD";fi
 		grep '^ON_BOARD_EMMC_COMPONENT=y' .config;if [[ $? -eq 0 ]];then FLASH="EMMC";fi
 		grep '^CONFIG_RTL8367=y' .config;if [[ $? -eq 0 ]];then ETH="RTL8367";fi
