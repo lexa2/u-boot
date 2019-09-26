@@ -1,8 +1,8 @@
 #!/bin/bash
 CCVER=$(arm-linux-gnueabihf-gcc --version |grep arm| sed -e 's/^.* \([0-9]\.[0-9-]\).*$/\1/')
 echo "gcc-version (CROSS_COMPILE):"$CCVER
-if [[ $CCVER =~ ^[789] ]]; then
-	echo "arm-linux-gnueabihf-gcc version 7+ currently not supported";exit 1;
+if [[ $CCVER =~ ^[9] ]]; then
+	echo "arm-linux-gnueabihf-gcc version 9+ currently not supported";exit 1;
 fi
 
 LANG=C
