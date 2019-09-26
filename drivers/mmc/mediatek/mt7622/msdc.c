@@ -131,7 +131,7 @@ void msdc_dump_card_status(u32 card_status)
         "Reserved",		/* 14 */
         "I/O mode",		/* 15 */
     };
-#endif    
+#endif
     if (card_status & R1_OUT_OF_RANGE)
         MSDC_TRC_PRINT(MSDC_DSTATUS,("\t[CARD_STATUS] Out of Range\n"));
     if (card_status & R1_ADDRESS_ERROR)
@@ -187,56 +187,56 @@ void msdc_dump_ocr_reg(u32 resp)
 {
     if (resp & (1 << 7))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] Low Voltage Range\n"));
-	
+
     if (resp & (1 << 15))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 2.7-2.8 volt\n"));
-	
+
     if (resp & (1 << 16))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 2.8-2.9 volt\n"));
-	
+
     if (resp & (1 << 17))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 2.9-3.0 volt\n"));
-	
+
     if (resp & (1 << 18))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 3.0-3.1 volt\n"));
-	
+
     if (resp & (1 << 19))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 3.1-3.2 volt\n"));
-	
+
     if (resp & (1 << 20))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 3.2-3.3 volt\n"));
-	
+
     if (resp & (1 << 21))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 3.3-3.4 volt\n"));
-	
+
     if (resp & (1 << 22))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 3.4-3.5 volt\n"));
-	
+
     if (resp & (1 << 23))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] 3.5-3.6 volt\n"));
-	
+
     if (resp & (1 << 24)){
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] Switching to 1.8V Accepted (S18A)\n"));
 		//if(MSDC_DREG)
            MSDC_TRC_PRINT(MSDC_INFO,("\t[OCR] Switching to 1.8V Accepted (S18A)\n"));
     }
-	
+
     if (resp & (1 << 30))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] Card Capacity Status (CCS)\n"));
-	
+
     if (resp & (1UL << 31))
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] Card Power Up Status (Idle)\n"));
     else
         MSDC_TRC_PRINT(MSDC_DREG,("\t[OCR] Card Power Up Status (Busy)\n"));
-	
+
 }
 
 void msdc_dump_io_resp(u32 resp)
 {
     u32 flags = (resp >> 8) & 0xFF;
-#ifndef KEEP_SLIENT_BUILD    
+#ifndef KEEP_SLIENT_BUILD
     char *state[] = {"DIS", "CMD", "TRN", "RFU"};
-#endif    
+#endif
     if (flags & (1 << 7))
         MSDC_TRC_PRINT(MSDC_STACK,("\t[IO] COM_CRC_ERR\n"));
     if (flags & (1 << 6))
@@ -334,18 +334,18 @@ void msdc_dump_register(struct mmc_host *host)
     MSDC_TRC_PRINT(MSDC_HREG,("[SD%d] Reg[%x] MAIN_VER       = 0x%x\n", host->id, OFFSET_MSDC_VERSION,   MSDC_READ32(MSDC_VERSION)));
     MSDC_TRC_PRINT(MSDC_HREG,("[SD%d] Reg[%x] MSDC_ECO_VER   = 0x%x\n", host->id, OFFSET_MSDC_ECO_VER,   MSDC_READ32(MSDC_ECO_VER)));
 
-    msdc_dump_dbg_register(host);	
+    msdc_dump_dbg_register(host);
 }
 
 static void msdc_dump_dma_desc(struct mmc_host *host) __attribute__((unused));
-static void msdc_dump_dma_desc(struct mmc_host *host) 
+static void msdc_dump_dma_desc(struct mmc_host *host)
 {
     msdc_priv_t *priv = (msdc_priv_t*)host->priv;
     int i;
 
 #ifndef KEEP_SLIENT_BUILD
     u32 *ptr;
-#else 
+#else
     u32 __attribute__ ((unused)) *ptr;
 #endif
 
@@ -575,7 +575,7 @@ gpd_t *msdc_alloc_gpd(struct mmc_host *host, int num)
 
     ptr = gpd + num - 1;
     ptr->next = (void*)(gpd + num); /* pointer to null gpd */
-    
+
     /* create link-list */
     if (ptr != gpd) {
         do {
@@ -584,7 +584,7 @@ gpd_t *msdc_alloc_gpd(struct mmc_host *host, int num)
             ptr = prev;
         } while (ptr != gpd);
     }
-	
+
 	DMAGPDPTR_DBGCHK(gpd, 16);
 
     return gpd;
@@ -598,7 +598,7 @@ __bd_t *msdc_alloc_bd(struct mmc_host *host, int num)
 
     if (priv->alloc_bd + num > MAX_BD_POOL_SZ || num == 0)
         return NULL;
-    
+
     bd = priv->bd_pool + priv->alloc_bd;
     priv->alloc_bd += num;
 
@@ -617,7 +617,7 @@ __bd_t *msdc_alloc_bd(struct mmc_host *host, int num)
             ptr = prev;
         } while (ptr != bd);
     }
-	
+
 	DMABDPTR_DBGCHK(bd, 16);
 
 
@@ -637,7 +637,7 @@ void msdc_queue_bd(struct mmc_host *host, gpd_t *gpd, __bd_t *bd)
     gpd->bdp = 1;
     gpd->ptr = (void*)bd;
 
-    if ((priv->cfg.flags & DMA_FLAG_EN_CHKSUM) == 0) 
+    if ((priv->cfg.flags & DMA_FLAG_EN_CHKSUM) == 0)
         return;
 
     /* calculate and fill bd checksum */
@@ -698,10 +698,10 @@ void msdc_reset_gpd(struct mmc_host *host)
 void msdc_set_host_level_pwr(struct mmc_host *host, int level)
 {
     unsigned int ret = 0;
-    
+
     if (level) {
 		host->cur_pwr = VOL_1800;
-        
+
         #ifdef PMIC_SUPPORT
         ret = pmic_config_interface(0xA7,0x2,0x7,4); /* VMC=1.8V */
         #endif
@@ -712,7 +712,7 @@ void msdc_set_host_level_pwr(struct mmc_host *host, int level)
         ret = pmic_config_interface(0xA7,0x7,0x7,4); /* VMC=3.3V */
         #endif
     }
-	
+
     if (ret != 0) {
             MSDC_TRC_PRINT(MSDC_PMIC,("PMIC: Set MSDC Vol Level Fail\n"));
     }
@@ -726,20 +726,20 @@ void msdc_set_host_level_pwr(struct mmc_host *host, int level)
 void msdc_set_card_pwr(struct mmc_host *host, int on)
 {
     unsigned int ret;
-    
+
     ret = pmic_config_interface(0xAB,0x7,0x7,4); /* VMCH=3.3V */
 	host->cur_pwr = VOL_3300;
 
     if (ret == 0) {
-		
-        if(on) {            
+
+        if(on) {
             ret = pmic_config_interface(0xAB,0x1,0x1,0); /* VMCH_EN=1 */
         }
 		else {
             ret = pmic_config_interface(0xAB,0x0,0x1,0); /* VMCH_EN=0 */
         }
     }
-	
+
     if (ret != 0) {
          MSDC_TRC_PRINT(MSDC_PMIC,("PMIC: Set MSDC Host Power Fail\n"));
     }
@@ -760,7 +760,7 @@ void msdc_set_host_pwr(struct mmc_host *host, int on)
             ret = pmic_config_interface(0xA7,0x0,0x1,0); /* VMC_EN=0 */
         }
     }
-    
+
     if (ret != 0) {
         MSDC_TRC_PRINT(MSDC_PMIC,("PMIC: Set MSDC Card Power Fail\n"));
     }
@@ -921,12 +921,12 @@ void msdc_set_card_pwr(struct mmc_host *host, int on)
     if (on){
 		switch(host->id){
 		   case 0:
-#ifndef FPGA_SDCARD_TRIALRUN		   	
+#ifndef FPGA_SDCARD_TRIALRUN
 			   msdc_set_gpio(MSDC0_PWR_MASK_VOL_18);
 			   msdc_set_gpio(MSDC0_PWR_MASK_L4);
 			   msdc_set_gpio(MSDC0_PWR_MASK_EN);
 			   break;
-#endif			   
+#endif
 		   case 1:
 			   msdc_set_gpio(PWR_MASK_VOL_33);
 			   msdc_set_gpio(PWR_MASK_L4);
@@ -977,7 +977,7 @@ void msdc_set_host_pwr(struct mmc_host *host, int on)
 #endif
 
 void msdc_set_startbit(struct mmc_host *host, u8 start_bit)
-{	
+{
     u32 base = host->base;
     msdc_priv_t *priv = (msdc_priv_t*)host->priv;
 
@@ -1001,7 +1001,7 @@ void msdc_set_smpl(struct mmc_host *host, u8 dsmpl, u8 rsmpl)
     while (!(MSDC_READ32(MSDC_CFG) & MSDC_CFG_CKSTB));
 
     priv->rsmpl = rsmpl;
-    priv->rdsmpl = dsmpl;    
+    priv->rdsmpl = dsmpl;
 }
 #else
 #define TYPE_CMD_RESP_EDGE      (0)
@@ -1089,7 +1089,7 @@ void msdc_set_smpl(struct mmc_host *host, u8 HS400, u8 mode, u8 type)
             }
             else if (mode == MSDC_SMPL_SEPERATE) {
                 MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_R_D_SMPL_SEL, 1);
-                for(i=0; i<8; i++);
+                for(i=0; i<8; i++)
                 {
                     MSDC_SET_FIELD(MSDC_IOCON, (MSDC_IOCON_R_D0SPL << i), read_data_edge[i]);
                 }
@@ -1110,7 +1110,7 @@ void msdc_set_smpl(struct mmc_host *host, u8 HS400, u8 mode, u8 type)
             }
             else if (mode == MSDC_SMPL_SEPERATE) {
                 MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_W_D_SMPL_SEL, 1);
-                for(i=0; i<4; i++);
+                for(i=0; i<4; i++)
                 {
                     MSDC_SET_FIELD(MSDC_IOCON, (MSDC_IOCON_W_D0SPL << i), write_data_edge[i]);//dat0~4 is for SDIO card.
                 }
@@ -1601,7 +1601,7 @@ int msdc_cmd(struct mmc_host *host, struct mmc_command *cmd)
         //       This means that 2nd invocation of msdc_tune_cmdrsp() occurs here!
         //--> To Do: consider if 2nd invocation can be avoid
         if ( host->app_cmd!=2 ) { //Light 20121225, to prevent recursive call path: msdc_tune_cmdrsp->msdc_app_cmd->msdc_cmd->msdc_tune_cmdrsp
-        err = msdc_tune_cmdrsp(host, cmd);
+            err = msdc_tune_cmdrsp(host, cmd);
             if (err != MMC_ERR_NONE){
                 MSDC_ERR_PRINT(MSDC_ERROR,("[Err handle][%s:%d]tune cmd fail\n", __func__, __LINE__));
             }
@@ -2944,257 +2944,251 @@ void msdc_reset_tune_counter(struct mmc_host *host)
 #ifdef FEATURE_MMC_CM_TUNING
 int msdc_tune_cmdrsp(struct mmc_host *host, struct mmc_command *cmd)
 {
-    u32 base = host->base;
+	u32 base = host->base;
 	u32 sel = 0;
-    u32 rsmpl,cur_rsmpl, orig_rsmpl;
+	u32 rsmpl,cur_rsmpl, orig_rsmpl;
 	u32 rrdly,cur_rrdly, orig_rrdly;
 	u32 cntr,cur_cntr,orig_cmdrtc;
-    u32 dl_cksel, cur_dl_cksel, orig_dl_cksel;
-    u32 times = 0;
-    int result = MMC_ERR_CMDTUNEFAIL;
+	u32 dl_cksel, cur_dl_cksel, orig_dl_cksel;
+	u32 times = 0;
+	int result = MMC_ERR_CMDTUNEFAIL;
 	u32 tmp = 0;
 	u32 t_rrdly, t_rsmpl, t_dl_cksel,t_cmdrtc;
 
-    if (host->sclk > 100000000){
+	if (host->sclk > 100000000){
 		sel = 1;
 		//MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL,0);
-		}
-		
+	}
+
 	MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, orig_rsmpl);
 	MSDC_GET_FIELD(MSDC_PAD_TUNE, MSDC_PAD_TUNE_CMDRDLY, orig_rrdly);
 	MSDC_GET_FIELD(MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMD_RSP, orig_cmdrtc);
-    MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, orig_dl_cksel);
+	MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, orig_dl_cksel);
 
-	 dl_cksel = 0;
-        do {
-			cntr = 0;
-			do{
-				rrdly = 0;
-             do {
-				 for (rsmpl = 0; rsmpl < 2; rsmpl++) {
-					 cur_rsmpl = (orig_rsmpl + rsmpl) % 2;
-					 MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, cur_rsmpl);
-					 if(host->sclk <= 400000) {//In sd/emmc init flow, fix rising edge for latching cmd response
-						 MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, 0);
-					 }
-					 if (cmd->opcode != MMC_CMD_STOP_TRANSMISSION) {
-						 if(host->app_cmd){
-							 result = msdc_app_cmd(host);
-							 if(result != MMC_ERR_NONE)
+	dl_cksel = 0;
+	do {
+		cntr = 0;
+		do{
+			rrdly = 0;
+			do {
+				for (rsmpl = 0; rsmpl < 2; rsmpl++) {
+					cur_rsmpl = (orig_rsmpl + rsmpl) % 2;
+					MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, cur_rsmpl);
+					if(host->sclk <= 400000) {//In sd/emmc init flow, fix rising edge for latching cmd response
+						MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, 0);
+					}
+					if (cmd->opcode != MMC_CMD_STOP_TRANSMISSION) {
+						if(host->app_cmd){
+							result = msdc_app_cmd(host);
+							if(result != MMC_ERR_NONE)
 								 return MMC_ERR_CMDTUNEFAIL;
-						 }
-						 result = msdc_send_cmd(host, cmd);
-						 if(result == MMC_ERR_TIMEOUT)
-							 rsmpl--;
-						 if (result != MMC_ERR_NONE && cmd->opcode != MMC_CMD_STOP_TRANSMISSION){
-							 tmp = MSDC_READ32(SDC_CMD);
-							 /* check if data is used by the command or not */
-							 if (tmp & 0x1800) {
-								 if(msdc_abort_handler(host, 1))
-									 MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] abort failed\n",host->id));
-							 }
-							 continue;
-						 }
-						 result = msdc_wait_rsp(host, cmd);                        
-					 } else if(cmd->opcode == MMC_CMD_STOP_TRANSMISSION){
-						 result = MMC_ERR_NONE;
-						 goto done;
-					 }
-					 else
-						 result = MMC_ERR_BADCRC;
-					 
-					 times++;
-#ifdef ___MSDC_DEBUG___
-					 /* for debugging */
-						 MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, t_rsmpl);
-						 MSDC_GET_FIELD(MSDC_PAD_TUNE, MSDC_PAD_TUNE_CMDRDLY, t_rrdly);
-						 //MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL, t_cksel);
-						 MSDC_GET_FIELD(MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMD_RSP, t_cmdrtc);
-						 MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, t_dl_cksel);
+						}
+						result = msdc_send_cmd(host, cmd);
+						if(result == MMC_ERR_TIMEOUT)
+							rsmpl--;
+						if (result != MMC_ERR_NONE && cmd->opcode != MMC_CMD_STOP_TRANSMISSION){
+							tmp = MSDC_READ32(SDC_CMD);
+							/* check if data is used by the command or not */
+							if (tmp & 0x1800) {
+								if(msdc_abort_handler(host, 1))
+									MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] abort failed\n",host->id));
+							}
+							continue;
+						}
+						result = msdc_wait_rsp(host, cmd);                        
+					} else if(cmd->opcode == MMC_CMD_STOP_TRANSMISSION){
+						result = MMC_ERR_NONE;
+						goto done;
+					} else
+						result = MMC_ERR_BADCRC;
 
-						 MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> CMDRRDLY=%d, RSPL=%dh\n",
-								 host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL", t_rrdly, t_rsmpl));
-						 //MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> MSDC_CKGEN_RX_SDCLKO_SEL=%xh\n",
-						 //host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL", t_cksel));
-						 MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> CMD_RSP_TA_CNTR=%xh\n",
-								 host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL", t_cmdrtc));
-						 MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> INT_DAT_LATCH_CK_SEL=%xh\n",
-								 host->id, times, (result == MMC_ERR_NONE) ? "PASS" : "FAIL", t_dl_cksel));
+					times++;
+#ifdef ___MSDC_DEBUG___
+					/* for debugging */
+					MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_RSPL, t_rsmpl);
+					MSDC_GET_FIELD(MSDC_PAD_TUNE, MSDC_PAD_TUNE_CMDRDLY, t_rrdly);
+					//MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL, t_cksel);
+					MSDC_GET_FIELD(MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMD_RSP, t_cmdrtc);
+					MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, t_dl_cksel);
+
+					MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> CMDRRDLY=%d, RSPL=%dh\n",
+						host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL", t_rrdly, t_rsmpl));
+					//MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> MSDC_CKGEN_RX_SDCLKO_SEL=%xh\n",
+						//host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL", t_cksel));
+					MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> CMD_RSP_TA_CNTR=%xh\n",
+						host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL", t_cmdrtc));
+					MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s> INT_DAT_LATCH_CK_SEL=%xh\n",
+						host->id, times, (result == MMC_ERR_NONE) ? "PASS" : "FAIL", t_dl_cksel));
 #endif
-					 if (result == MMC_ERR_NONE)                        
-						 goto done;
-					 /*if ((result == MMC_ERR_TIMEOUT || result == MMC_ERR_BADCRC)&&  cmd->opcode == MMC_CMD_STOP_TRANSMISSION){
+					if (result == MMC_ERR_NONE)
+						goto done;
+					/*if ((result == MMC_ERR_TIMEOUT || result == MMC_ERR_BADCRC)&&  cmd->opcode == MMC_CMD_STOP_TRANSMISSION){
 					   printf("[SD%d]TUNE_CMD12--failed ignore\n",host->id);
 					   result = MMC_ERR_NONE;
 					   goto done;
-					   }*/
-					 tmp = MSDC_READ32(SDC_CMD);
-					 /* check if data is used by the command or not */
-					 if (tmp & 0x1800) {
-						 if(msdc_abort_handler(host, 1))
-							 MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] abort failed\n",host->id));
-					 }
-				 }    
-                cur_rrdly = (orig_rrdly + rrdly + 1) % 32;
-                MSDC_SET_FIELD(MSDC_PAD_TUNE, MSDC_PAD_TUNE_CMDRDLY, cur_rrdly);
-            	} while (++rrdly < 32);
-			 if(!sel)
-			 	break;			 	
-			 	cur_cntr = (orig_cmdrtc + cntr + 1) % 8;
-                MSDC_SET_FIELD(MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMD_RSP, cur_cntr);
-        	}while(++cntr < 8);
-            /* no need to update data ck sel */
-            if (!sel)
-                break;        
-            cur_dl_cksel = (orig_dl_cksel +dl_cksel+1) % 8;
-            MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, cur_dl_cksel);
-            dl_cksel++;                
-        } while(dl_cksel < 8);
-        /* no need to update ck sel */
-		if(result != MMC_ERR_NONE)
-			result = MMC_ERR_CMDTUNEFAIL;
-done:  
-
+					}*/
+					tmp = MSDC_READ32(SDC_CMD);
+					/* check if data is used by the command or not */
+					if (tmp & 0x1800) {
+						if(msdc_abort_handler(host, 1))
+							MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] abort failed\n",host->id));
+					}
+				}
+                		cur_rrdly = (orig_rrdly + rrdly + 1) % 32;
+                		MSDC_SET_FIELD(MSDC_PAD_TUNE, MSDC_PAD_TUNE_CMDRDLY, cur_rrdly);
+            		} while (++rrdly < 32);
+			if(!sel) break;
+			cur_cntr = (orig_cmdrtc + cntr + 1) % 8;
+			MSDC_SET_FIELD(MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMD_RSP, cur_cntr);
+		}while(++cntr < 8);
+		/* no need to update data ck sel */
+		if (!sel) break;
+		cur_dl_cksel = (orig_dl_cksel +dl_cksel+1) % 8;
+		MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, cur_dl_cksel);
+		dl_cksel++;
+	} while(dl_cksel < 8);
+	/* no need to update ck sel */
+	if(result != MMC_ERR_NONE)
+		result = MMC_ERR_CMDTUNEFAIL;
+done:
 	MSDC_TRC_PRINT(MSDC_TUNING,("[SD%d] <TUNE_CMD><%d><%s>\n",host->id, times, (result == MMC_ERR_NONE) ?"PASS" : "FAIL"));	
-    return result;
+	return result;
 }
 #endif
 
 #ifdef FEATURE_MMC_RD_TUNING
 int msdc_tune_bread(struct mmc_host *host, u8 *dst, u32 src, u32 nblks)
 {
-    u32 base = host->base;
-    u32 dcrc, ddr = 0, sel = 0;
-    u32 cur_rxdly0, cur_rxdly1;
-    u32 dsmpl, cur_dsmpl, orig_dsmpl;
+	u32 base = host->base;
+	u32 dcrc, ddr = 0, sel = 0;
+	u32 cur_rxdly0, cur_rxdly1;
+	u32 dsmpl, cur_dsmpl, orig_dsmpl;
 	u32 dsel,cur_dsel,orig_dsel;
 	u32 dl_cksel,cur_dl_cksel,orig_dl_cksel;
 	u32 rxdly;
-    u32 cur_dat0, cur_dat1, cur_dat2, cur_dat3, cur_dat4, cur_dat5, 
+	u32 cur_dat0, cur_dat1, cur_dat2, cur_dat3, cur_dat4, cur_dat5, 
         cur_dat6, cur_dat7;
-    u32 orig_dat0, orig_dat1, orig_dat2, orig_dat3, orig_dat4, orig_dat5, 
-        orig_dat6, orig_dat7;
-    u32 orig_clkmode;
-    u32 times = 0;
+	u32 orig_dat0, orig_dat1, orig_dat2, orig_dat3, orig_dat4, orig_dat5, 
+	orig_dat6, orig_dat7;
+	u32 orig_clkmode;
+ 	u32 times = 0;
 	u32 t_dspl,  t_dl_cksel;
-    //u32 t_cksel;
-    int result = MMC_ERR_READTUNEFAIL;
+	//u32 t_cksel;
+	int result = MMC_ERR_READTUNEFAIL;
 
-    if (host->sclk > 100000000)
-        sel = 1;
+	if (host->sclk > 100000000)
+        	sel = 1;
 	if(host->card)
-    	ddr = mmc_card_ddr(host->card);
+		ddr = mmc_card_ddr(host->card);
+
 	MSDC_GET_FIELD(MSDC_CFG,MSDC_CFG_CKMOD,orig_clkmode);
 	//if(orig_clkmode == 1)
 		//MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL, 0);
-	
+
 	MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_MSDC_DLY_SEL, orig_dsel);
-    MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, orig_dl_cksel);
-    MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, orig_dsmpl);
-	
-    /* Tune Method 2. delay each data line */
-    MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DDLSEL, 1);
- 
+	MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, orig_dl_cksel);
+	MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, orig_dsmpl);
+
+	/* Tune Method 2. delay each data line */
+	MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DDLSEL, 1);
+
         dl_cksel = 0;
         do {
-			dsel = 0;
-			do{
+	  dsel = 0;
+	  do{
             rxdly = 0;
-            do {
-                for (dsmpl = 0; dsmpl < 2; dsmpl++) {
-                    cur_dsmpl = (orig_dsmpl + dsmpl) % 2;
-                    MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, cur_dsmpl);
-                    result = host->blk_read(host, dst, src, nblks);
-					if(result == MMC_ERR_CMDTUNEFAIL || result == MMC_ERR_CMD_RSPCRC || result == MMC_ERR_ACMD_RSPCRC)
-						goto done;
-                    MSDC_GET_FIELD(SDC_DCRC_STS, SDC_DCRC_STS_POS|SDC_DCRC_STS_NEG, dcrc);
-					
-                    if (!ddr) dcrc &= ~SDC_DCRC_STS_NEG;
+	    do {
+		for (dsmpl = 0; dsmpl < 2; dsmpl++) {
+			cur_dsmpl = (orig_dsmpl + dsmpl) % 2;
+			MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, cur_dsmpl);
+                    	result = host->blk_read(host, dst, src, nblks);
+			if(result == MMC_ERR_CMDTUNEFAIL || result == MMC_ERR_CMD_RSPCRC || result == MMC_ERR_ACMD_RSPCRC)
+				goto done;
+			MSDC_GET_FIELD(SDC_DCRC_STS, SDC_DCRC_STS_POS|SDC_DCRC_STS_NEG, dcrc);
 
-                    /* for debugging */
-					times++;
+			if (!ddr) dcrc &= ~SDC_DCRC_STS_NEG;
+
+			/* for debugging */
+			times++;
 #ifdef ___MSDC_DEBUG___
-                        MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, t_dspl);
-                        //MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL, t_cksel);
-                        MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, t_dl_cksel);
+			MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, t_dspl);
+			//MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL, t_cksel);
+			MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, t_dl_cksel);
 
-                        MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> DCRC=%xh\n",
-                            host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?"PASS" : "FAIL", dcrc));
-                        MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> DATRDDLY0=%xh, DATRDDLY1=%xh\n",
-                            host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?
-                            "PASS" : "FAIL", MSDC_READ32(MSDC_DAT_RDDLY0), MSDC_READ32(MSDC_DAT_RDDLY1)));
-                        //MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> MSDC_CKGEN_RX_SDCLKO_SEL=%xh\n",
-                            //host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?"PASS" : "FAIL", t_cksel));
-                        MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> INT_DAT_LATCH_CK_SEL=%xh, DSMPL=%xh\n",
-                            host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?
-                            "PASS" : "FAIL", t_dl_cksel, t_dspl));
+			MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> DCRC=%xh\n",
+			    host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?"PASS" : "FAIL", dcrc));
+			MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> DATRDDLY0=%xh, DATRDDLY1=%xh\n",
+			    host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?
+			    "PASS" : "FAIL", MSDC_READ32(MSDC_DAT_RDDLY0), MSDC_READ32(MSDC_DAT_RDDLY1)));
+			//MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> MSDC_CKGEN_RX_SDCLKO_SEL=%xh\n",
+			    //host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?"PASS" : "FAIL", t_cksel));
+			MSDC_DBG_PRINT(MSDC_TUNING,("[SD%d] <TUNE_BREAD_%d><%s> INT_DAT_LATCH_CK_SEL=%xh, DSMPL=%xh\n",
+			    host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?
+			    "PASS" : "FAIL", t_dl_cksel, t_dspl));
 #endif
-                    /* no cre error in this data line */
-                    if (result == MMC_ERR_NONE && dcrc == 0) {
-                        goto done;
-                    } else {
-                        result = MMC_ERR_BADCRC;
-                    }      
-                }
-                cur_rxdly0 = MSDC_READ32(MSDC_DAT_RDDLY0);
-                cur_rxdly1 = MSDC_READ32(MSDC_DAT_RDDLY1);
+			/* no cre error in this data line */
+			if (result == MMC_ERR_NONE && dcrc == 0) {
+				goto done;
+			} else {
+				result = MMC_ERR_BADCRC;
+			}
+		}
+		cur_rxdly0 = MSDC_READ32(MSDC_DAT_RDDLY0);
+		cur_rxdly1 = MSDC_READ32(MSDC_DAT_RDDLY1);
 
-                
-                orig_dat0 = (cur_rxdly0 >> 24) & 0x1F;
-                orig_dat1 = (cur_rxdly0 >> 16) & 0x1F;
-                orig_dat2 = (cur_rxdly0 >> 8) & 0x1F;
-                orig_dat3 = (cur_rxdly0 >> 0) & 0x1F;
-                orig_dat4 = (cur_rxdly1 >> 24) & 0x1F;
-                orig_dat5 = (cur_rxdly1 >> 16) & 0x1F;
-                orig_dat6 = (cur_rxdly1 >> 8) & 0x1F;
-                orig_dat7 = (cur_rxdly1 >> 0) & 0x1F;
-                
-                if (ddr) {
-                    cur_dat0 = (dcrc & (1 << 0) || dcrc & (1 <<  8)) ? ((orig_dat0 + 1) % 32) : orig_dat0;
-                    cur_dat1 = (dcrc & (1 << 1) || dcrc & (1 <<  9)) ? ((orig_dat1 + 1) % 32) : orig_dat1;
-                    cur_dat2 = (dcrc & (1 << 2) || dcrc & (1 << 10)) ? ((orig_dat2 + 1) % 32) : orig_dat2;
-                    cur_dat3 = (dcrc & (1 << 3) || dcrc & (1 << 11)) ? ((orig_dat3 + 1) % 32) : orig_dat3;
-					cur_dat4 = (dcrc & (1 << 4) || dcrc & (1 << 12)) ? ((orig_dat4 + 1) % 32) : orig_dat4;
-        		    cur_dat5 = (dcrc & (1 << 5) || dcrc & (1 << 13)) ? ((orig_dat5 + 1) % 32) : orig_dat5;
-            		cur_dat6 = (dcrc & (1 << 6) || dcrc & (1 << 14)) ? ((orig_dat6 + 1) % 32) : orig_dat6;
-            		cur_dat7 = (dcrc & (1 << 7) || dcrc & (1 << 15)) ? ((orig_dat7 + 1) % 32) : orig_dat7;
-                } else {
-                    cur_dat0 = (dcrc & (1 << 0)) ? ((orig_dat0 + 1) % 32) : orig_dat0;
-                    cur_dat1 = (dcrc & (1 << 1)) ? ((orig_dat1 + 1) % 32) : orig_dat1;
-                    cur_dat2 = (dcrc & (1 << 2)) ? ((orig_dat2 + 1) % 32) : orig_dat2;
-                    cur_dat3 = (dcrc & (1 << 3)) ? ((orig_dat3 + 1) % 32) : orig_dat3;
-					cur_dat4 = (dcrc & (1 << 4)) ? ((orig_dat4 + 1) % 32) : orig_dat4;
+		orig_dat0 = (cur_rxdly0 >> 24) & 0x1F;
+		orig_dat1 = (cur_rxdly0 >> 16) & 0x1F;
+		orig_dat2 = (cur_rxdly0 >> 8) & 0x1F;
+		orig_dat3 = (cur_rxdly0 >> 0) & 0x1F;
+		orig_dat4 = (cur_rxdly1 >> 24) & 0x1F;
+		orig_dat5 = (cur_rxdly1 >> 16) & 0x1F;
+		orig_dat6 = (cur_rxdly1 >> 8) & 0x1F;
+		orig_dat7 = (cur_rxdly1 >> 0) & 0x1F;
+
+		if (ddr) {
+			cur_dat0 = (dcrc & (1 << 0) || dcrc & (1 <<  8)) ? ((orig_dat0 + 1) % 32) : orig_dat0;
+			cur_dat1 = (dcrc & (1 << 1) || dcrc & (1 <<  9)) ? ((orig_dat1 + 1) % 32) : orig_dat1;
+			cur_dat2 = (dcrc & (1 << 2) || dcrc & (1 << 10)) ? ((orig_dat2 + 1) % 32) : orig_dat2;
+			cur_dat3 = (dcrc & (1 << 3) || dcrc & (1 << 11)) ? ((orig_dat3 + 1) % 32) : orig_dat3;
+			cur_dat4 = (dcrc & (1 << 4) || dcrc & (1 << 12)) ? ((orig_dat4 + 1) % 32) : orig_dat4;
+			cur_dat5 = (dcrc & (1 << 5) || dcrc & (1 << 13)) ? ((orig_dat5 + 1) % 32) : orig_dat5;
+			cur_dat6 = (dcrc & (1 << 6) || dcrc & (1 << 14)) ? ((orig_dat6 + 1) % 32) : orig_dat6;
+			cur_dat7 = (dcrc & (1 << 7) || dcrc & (1 << 15)) ? ((orig_dat7 + 1) % 32) : orig_dat7;
+		} else {
+			cur_dat0 = (dcrc & (1 << 0)) ? ((orig_dat0 + 1) % 32) : orig_dat0;
+			cur_dat1 = (dcrc & (1 << 1)) ? ((orig_dat1 + 1) % 32) : orig_dat1;
+			cur_dat2 = (dcrc & (1 << 2)) ? ((orig_dat2 + 1) % 32) : orig_dat2;
+			cur_dat3 = (dcrc & (1 << 3)) ? ((orig_dat3 + 1) % 32) : orig_dat3;
+			cur_dat4 = (dcrc & (1 << 4)) ? ((orig_dat4 + 1) % 32) : orig_dat4;
                 	cur_dat5 = (dcrc & (1 << 5)) ? ((orig_dat5 + 1) % 32) : orig_dat5;
                 	cur_dat6 = (dcrc & (1 << 6)) ? ((orig_dat6 + 1) % 32) : orig_dat6;
                 	cur_dat7 = (dcrc & (1 << 7)) ? ((orig_dat7 + 1) % 32) : orig_dat7;
-                }
-              
-                cur_rxdly0 = ((cur_dat0 & 0x1F) << 24) | ((cur_dat1 & 0x1F) << 16) |
-                    ((cur_dat2 & 0x1F)<< 8) | ((cur_dat3 & 0x1F) << 0);
-                cur_rxdly1 = ((cur_dat4 & 0x1F) << 24) | ((cur_dat5 & 0x1F) << 16) |
+		}
+
+		cur_rxdly0 = ((cur_dat0 & 0x1F) << 24) | ((cur_dat1 & 0x1F) << 16) |
+		    ((cur_dat2 & 0x1F)<< 8) | ((cur_dat3 & 0x1F) << 0);
+		cur_rxdly1 = ((cur_dat4 & 0x1F) << 24) | ((cur_dat5 & 0x1F) << 16) |
                     ((cur_dat6 & 0x1F) << 8) | ((cur_dat7 & 0x1F) << 0);
 
-                MSDC_WRITE32(MSDC_DAT_RDDLY0, cur_rxdly0);
-                MSDC_WRITE32(MSDC_DAT_RDDLY1, cur_rxdly1);            
-            } while (++rxdly < 32);
-			if(!sel)
-				break;
-				cur_dsel = (orig_dsel + dsel + 1) % 32;
-            	MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_MSDC_DLY_SEL, cur_dsel);
-        	}while(++dsel < 32);
-            /* no need to update data ck sel */
-            if (orig_clkmode != 1)
-                break;
-        
-            cur_dl_cksel = (orig_dl_cksel + dl_cksel + 1)% 8;
-            MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, cur_dl_cksel);
-            dl_cksel++;                
-        } while(dl_cksel < 8);
+		MSDC_WRITE32(MSDC_DAT_RDDLY0, cur_rxdly0);
+		MSDC_WRITE32(MSDC_DAT_RDDLY1, cur_rxdly1);
+	    } while (++rxdly < 32);
+	    if(!sel) break;
+	    cur_dsel = (orig_dsel + dsel + 1) % 32;
+	    MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_MSDC_DLY_SEL, cur_dsel);
+	  }while(++dsel < 32);
+	  /* no need to update data ck sel */
+          if (orig_clkmode != 1) break;
+
+	  cur_dl_cksel = (orig_dl_cksel + dl_cksel + 1)% 8;
+	  MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, cur_dl_cksel);
+	  dl_cksel++;
+	} while(dl_cksel < 8);
 done:
 	MSDC_TRC_PRINT(MSDC_TUNING,("[SD%d] <msdc_tune_bread<%d><%s><cmd%d>@msdc_tune_bread\n",
-			host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?"PASS" : "FAIL", (nblks == 1 ? 17 : 18)));
+		host->id, times, (result == MMC_ERR_NONE && dcrc == 0) ?"PASS" : "FAIL", (nblks == 1 ? 17 : 18)));
 
-    return result;
+	return result;
 }
 #define READ_TUNING_MAX_HS (2 * 32)
 #define READ_TUNING_MAX_UHS (2 * 32 * 32)
@@ -3202,107 +3196,102 @@ done:
 
 int msdc_tune_read(struct mmc_host *host)
 {
-    u32 base = host->base;
-    u32 dcrc, ddr = 0, sel = 0;
-    u32 cur_rxdly0 = 0 , cur_rxdly1 = 0;
-    u32 cur_dsmpl = 0, orig_dsmpl;
+	u32 base = host->base;
+	u32 dcrc, ddr = 0, sel = 0;
+	u32 cur_rxdly0 = 0 , cur_rxdly1 = 0;
+	u32 cur_dsmpl = 0, orig_dsmpl;
 	u32 cur_dsel = 0,orig_dsel;
 	u32 cur_dl_cksel = 0,orig_dl_cksel;
-    u32 cur_dat0 = 0, cur_dat1 = 0, cur_dat2 = 0, cur_dat3 = 0, cur_dat4 = 0, cur_dat5 = 0, 
-        cur_dat6 = 0, cur_dat7 = 0;
-    u32 orig_dat0, orig_dat1, orig_dat2, orig_dat3, orig_dat4, orig_dat5, 
-        orig_dat6, orig_dat7;
-    u32 orig_clkmode;
-    //u32 times = 0;
-    int result = MMC_ERR_NONE;
+	u32 cur_dat0 = 0, cur_dat1 = 0, cur_dat2 = 0, cur_dat3 = 0, cur_dat4 = 0, cur_dat5 = 0, 
+	cur_dat6 = 0, cur_dat7 = 0;
+	u32 orig_dat0, orig_dat1, orig_dat2, orig_dat3, orig_dat4, orig_dat5,
+	    orig_dat6, orig_dat7;
+	u32 orig_clkmode;
+	//u32 times = 0;
+	int result = MMC_ERR_NONE;
 
-    if (host->sclk > 100000000)
-        sel = 1;
+	if (host->sclk > 100000000)
+		sel = 1;
 	if(host->card)
-	    ddr = mmc_card_ddr(host->card);
+		ddr = mmc_card_ddr(host->card);
 	MSDC_GET_FIELD(MSDC_CFG,MSDC_CFG_CKMOD,orig_clkmode);
 	//if(orig_clkmode == 1)
 		//MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_RX_SDCLKO_SEL, 0);
-	
+
 	MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_MSDC_DLY_SEL, orig_dsel);
-    MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, orig_dl_cksel);
-    MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, orig_dsmpl);
-	
-    /* Tune Method 2. delay each data line */
-    MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DDLSEL, 1);
+	MSDC_GET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, orig_dl_cksel);
+	MSDC_GET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, orig_dsmpl);
 
- 
-      cur_dsmpl = (orig_dsmpl + 1) ;
-	  MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, cur_dsmpl % 2);                    
-	  if(cur_dsmpl >= 2){
+	/* Tune Method 2. delay each data line */
+	MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DDLSEL, 1);
+
+	cur_dsmpl = (orig_dsmpl + 1);
+	MSDC_SET_FIELD(MSDC_IOCON, MSDC_IOCON_DSPL, cur_dsmpl % 2);
+	if(cur_dsmpl >= 2){
 		MSDC_GET_FIELD(SDC_DCRC_STS, SDC_DCRC_STS_POS|SDC_DCRC_STS_NEG, dcrc);
- 		if (!ddr) dcrc &= ~SDC_DCRC_STS_NEG;		
- 		
- 		        cur_rxdly0 = MSDC_READ32(MSDC_DAT_RDDLY0);
-                cur_rxdly1 = MSDC_READ32(MSDC_DAT_RDDLY1);
-                
-                orig_dat0 = (cur_rxdly0 >> 24) & 0x1F;
-                orig_dat1 = (cur_rxdly0 >> 16) & 0x1F;
-                orig_dat2 = (cur_rxdly0 >> 8) & 0x1F;
-                orig_dat3 = (cur_rxdly0 >> 0) & 0x1F;
-                orig_dat4 = (cur_rxdly1 >> 24) & 0x1F;
-                orig_dat5 = (cur_rxdly1 >> 16) & 0x1F;
-                orig_dat6 = (cur_rxdly1 >> 8) & 0x1F;
-                orig_dat7 = (cur_rxdly1 >> 0) & 0x1F;
-                
-                if (ddr) {
-                    cur_dat0 = (dcrc & (1 << 0) || dcrc & (1 <<  8)) ? (orig_dat0 + 1) : orig_dat0;
-                    cur_dat1 = (dcrc & (1 << 1) || dcrc & (1 <<  9)) ? (orig_dat1 + 1) : orig_dat1;
-                    cur_dat2 = (dcrc & (1 << 2) || dcrc & (1 << 10)) ? (orig_dat2 + 1) : orig_dat2;
-                    cur_dat3 = (dcrc & (1 << 3) || dcrc & (1 << 11)) ? (orig_dat3 + 1) : orig_dat3;					
-					cur_dat4 = (dcrc & (1 << 4) || dcrc & (1 << 12)) ? (orig_dat4 + 1) : orig_dat4;
-        		    cur_dat5 = (dcrc & (1 << 5) || dcrc & (1 << 13)) ? (orig_dat5 + 1) : orig_dat5;
-            		cur_dat6 = (dcrc & (1 << 6) || dcrc & (1 << 14)) ? (orig_dat6 + 1) : orig_dat6;
-            		cur_dat7 = (dcrc & (1 << 7) || dcrc & (1 << 15)) ? (orig_dat7 + 1) : orig_dat7;
-                } else {
-                    cur_dat0 = (dcrc & (1 << 0)) ? (orig_dat0 + 1) : orig_dat0;
-                    cur_dat1 = (dcrc & (1 << 1)) ? (orig_dat1 + 1) : orig_dat1;
-                    cur_dat2 = (dcrc & (1 << 2)) ? (orig_dat2 + 1) : orig_dat2;
-                    cur_dat3 = (dcrc & (1 << 3)) ? (orig_dat3 + 1) : orig_dat3;
-					cur_dat4 = (dcrc & (1 << 4)) ? (orig_dat4 + 1) : orig_dat4;
-                	cur_dat5 = (dcrc & (1 << 5)) ? (orig_dat5 + 1) : orig_dat5;
-                	cur_dat6 = (dcrc & (1 << 6)) ? (orig_dat6 + 1) : orig_dat6;
-                	cur_dat7 = (dcrc & (1 << 7)) ? (orig_dat7 + 1) : orig_dat7;
-                }                
+ 		if (!ddr) dcrc &= ~SDC_DCRC_STS_NEG;
 
-                cur_rxdly0 = ((cur_dat0 & 0x1F) << 24) | ((cur_dat1 & 0x1F) << 16) |
-                    ((cur_dat2 & 0x1F) << 8) | ((cur_dat3 & 0x1F) << 0);
-                cur_rxdly1 = ((cur_dat4 & 0x1F) << 24) | ((cur_dat5 & 0x1F)<< 16) |
-                    ((cur_dat6 & 0x1F) << 8) | ((cur_dat7 & 0x1F) << 0);
+		cur_rxdly0 = MSDC_READ32(MSDC_DAT_RDDLY0);
+		cur_rxdly1 = MSDC_READ32(MSDC_DAT_RDDLY1);
 
-                MSDC_WRITE32(MSDC_DAT_RDDLY0, cur_rxdly0);
-                MSDC_WRITE32(MSDC_DAT_RDDLY1, cur_rxdly1); 				
-            }
-	  	if(cur_dat0 >= 32 || cur_dat1 >= 32 || cur_dat2 >= 32 || cur_dat3 >= 32 ||
-		   cur_dat4 >= 32 || cur_dat5 >= 32 || cur_dat6 >= 32 || cur_dat7 >= 32){
-			if(sel){
-				
-				cur_dsel = (orig_dsel + 1);
-           		MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_MSDC_DLY_SEL, cur_dsel % 32);
+		orig_dat0 = (cur_rxdly0 >> 24) & 0x1F;
+		orig_dat1 = (cur_rxdly0 >> 16) & 0x1F;
+		orig_dat2 = (cur_rxdly0 >> 8) & 0x1F;
+		orig_dat3 = (cur_rxdly0 >> 0) & 0x1F;
+		orig_dat4 = (cur_rxdly1 >> 24) & 0x1F;
+		orig_dat5 = (cur_rxdly1 >> 16) & 0x1F;
+		orig_dat6 = (cur_rxdly1 >> 8) & 0x1F;
+		orig_dat7 = (cur_rxdly1 >> 0) & 0x1F;
 
-				}			
+		if (ddr) {
+			cur_dat0 = (dcrc & (1 << 0) || dcrc & (1 <<  8)) ? (orig_dat0 + 1) : orig_dat0;
+			cur_dat1 = (dcrc & (1 << 1) || dcrc & (1 <<  9)) ? (orig_dat1 + 1) : orig_dat1;
+			cur_dat2 = (dcrc & (1 << 2) || dcrc & (1 << 10)) ? (orig_dat2 + 1) : orig_dat2;
+			cur_dat3 = (dcrc & (1 << 3) || dcrc & (1 << 11)) ? (orig_dat3 + 1) : orig_dat3;					
+			cur_dat4 = (dcrc & (1 << 4) || dcrc & (1 << 12)) ? (orig_dat4 + 1) : orig_dat4;
+			cur_dat5 = (dcrc & (1 << 5) || dcrc & (1 << 13)) ? (orig_dat5 + 1) : orig_dat5;
+			cur_dat6 = (dcrc & (1 << 6) || dcrc & (1 << 14)) ? (orig_dat6 + 1) : orig_dat6;
+			cur_dat7 = (dcrc & (1 << 7) || dcrc & (1 << 15)) ? (orig_dat7 + 1) : orig_dat7;
+		} else {
+			cur_dat0 = (dcrc & (1 << 0)) ? (orig_dat0 + 1) : orig_dat0;
+			cur_dat1 = (dcrc & (1 << 1)) ? (orig_dat1 + 1) : orig_dat1;
+			cur_dat2 = (dcrc & (1 << 2)) ? (orig_dat2 + 1) : orig_dat2;
+			cur_dat3 = (dcrc & (1 << 3)) ? (orig_dat3 + 1) : orig_dat3;
+			cur_dat4 = (dcrc & (1 << 4)) ? (orig_dat4 + 1) : orig_dat4;
+			cur_dat5 = (dcrc & (1 << 5)) ? (orig_dat5 + 1) : orig_dat5;
+			cur_dat6 = (dcrc & (1 << 6)) ? (orig_dat6 + 1) : orig_dat6;
+			cur_dat7 = (dcrc & (1 << 7)) ? (orig_dat7 + 1) : orig_dat7;
 		}
-		if(cur_dsel >= 32){
-			if(orig_clkmode == 1 && sel){	
-				
-				cur_dl_cksel = (orig_dl_cksel + 1);
-            	MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, cur_dl_cksel % 8);
-			}               
+
+		cur_rxdly0 = ((cur_dat0 & 0x1F) << 24) | ((cur_dat1 & 0x1F) << 16) |
+			((cur_dat2 & 0x1F) << 8) | ((cur_dat3 & 0x1F) << 0);
+		cur_rxdly1 = ((cur_dat4 & 0x1F) << 24) | ((cur_dat5 & 0x1F)<< 16) |
+			((cur_dat6 & 0x1F) << 8) | ((cur_dat7 & 0x1F) << 0);
+
+		MSDC_WRITE32(MSDC_DAT_RDDLY0, cur_rxdly0);
+		MSDC_WRITE32(MSDC_DAT_RDDLY1, cur_rxdly1);
+	}
+	if(cur_dat0 >= 32 || cur_dat1 >= 32 || cur_dat2 >= 32 || cur_dat3 >= 32 ||
+	    cur_dat4 >= 32 || cur_dat5 >= 32 || cur_dat6 >= 32 || cur_dat7 >= 32){
+		if(sel){
+			cur_dsel = (orig_dsel + 1);
+			MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_CKGEN_MSDC_DLY_SEL, cur_dsel % 32);
 		}
-		++(host->time_read);
-		if((sel == 1 && orig_clkmode == 1 && host->time_read == READ_TUNING_MAX_UHS_CLKMOD1)||
+	}
+	if(cur_dsel >= 32){
+		if(orig_clkmode == 1 && sel){
+			cur_dl_cksel = (orig_dl_cksel + 1);
+			MSDC_SET_FIELD(MSDC_PATCH_BIT0, MSDC_INT_DAT_LATCH_CK_SEL, cur_dl_cksel % 8);
+		}
+	}
+	++(host->time_read);
+	if((sel == 1 && orig_clkmode == 1 && host->time_read == READ_TUNING_MAX_UHS_CLKMOD1)||
            (sel == 1 && orig_clkmode != 1 && host->time_read == READ_TUNING_MAX_UHS)||
            (sel == 0 && orig_clkmode != 1 && host->time_read == READ_TUNING_MAX_HS)){
-           
-			result = MMC_ERR_READTUNEFAIL;
-		}
+		result = MMC_ERR_READTUNEFAIL;
+	}
 
-    return result;
+	return result;
 }
 #endif
 
