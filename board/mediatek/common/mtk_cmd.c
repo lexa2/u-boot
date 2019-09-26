@@ -290,63 +290,61 @@ int do_uboot_check (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 
 int do_filesize_check (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
-    unsigned long partition_size,filesize;    
+    unsigned long partition_size,filesize;
     char s[32];
 	char *endp;
-    
+
 	if (argc != 2)
     	goto usage;
-    
+
 	partition_size = simple_strtoul(argv[1], &endp, 16);
 	if (*argv[1] == 0 || *endp != 0)
 			goto usage;
 
-	
 	filesize = getenv_hex("filesize",0);
 	printf("[do_filesize_check ]partition_size: 0x%lx ,, filesize: 0x%lx\n",partition_size,filesize);
 	if (filesize == 0)
 	{
 		printf("filesize == 0 ! please check the image is ok or not !!!.\n"); 
-		sprintf((char*) s, "%s", "bad");        
-        setenv("filesize_result", (const char *)s);
+		sprintf((char*) s, "%s", "bad");
+		setenv("filesize_result", (const char *)s);
 		return 0;
-		
 	}
     if ( partition_size < filesize )
     {
     	printf("Bad file size ! please check the image is ok or not !!! max_partition_size:0x%lx .\n",partition_size);
-        sprintf((char*) s, "%s", "bad");        
+        sprintf((char*) s, "%s", "bad");
         setenv("filesize_result", (const char *)s);
 
         return 0;
     }
 
-    sprintf((char*) s, "%s", "good");        
+    sprintf((char*) s, "%s", "good");
     setenv("filesize_result", (const char *)s);
 
     return 0;
-	
+
 usage:
-	return CMD_RET_USAGE;	
+	return CMD_RET_USAGE;
 }
 
 
 void input_value(char *str)
 {
-    if (str)
-        strcpy(console_buffer, str);
-    else
-        console_buffer[0] = '\0';
+	if (str)
+		strcpy(console_buffer, str);
+	else
+		console_buffer[0] = '\0';
 	while(1)
-    {
-        if (readline ("==:") > 0)
-        {
-            strcpy (str, console_buffer);
-            break;
-        }
-        else
-            break;
-    }
+	{
+		if (readline ("==:") > 0)
+		{
+			strcpy (str, console_buffer);
+			break;
+		}
+		else
+			break;
+	}
 }
 
 void get_filetype(char *dst, const char *src, int size)
