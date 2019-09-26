@@ -89,41 +89,42 @@ int mtk_pinctrl_update_gpio_value(int pin, unsigned char value, int size, const 
 /*---------------------------------------------------------------------------*/
 int mt_set_gpio_dir_chip(unsigned long pin, unsigned long dir)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    if (dir >= GPIO_DIR_MAX)
-        return -ERINVAL;
+	if (dir >= GPIO_DIR_MAX)
+		return -ERINVAL;
 
 	mtk_pinctrl_set_gpio_value(pin, dir, MAX_GPIO_PIN, mtk_pin_info_dir);
-    return RSUCCESS;
 
+	return RSUCCESS;
 }
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_dir_chip(unsigned long pin)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_dir);
+	return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_dir);
 }
 
 /*---------------------------------------------------------------------------*/
 int mt_set_gpio_smt_chip(unsigned long pin, unsigned long enable)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
 	mtk_pinctrl_set_gpio_value(pin, enable, MAX_GPIO_PIN, mtk_pin_info_smt);
-    return RSUCCESS;
+
+	return RSUCCESS;
 }
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_smt_chip(unsigned long pin)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_dir);
+	return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_dir);
 }
 /*---------------------------------------------------------------------------*/
 int mt_set_gpio_pull_select_chip(unsigned long pin, unsigned long select)
@@ -144,11 +145,11 @@ int mt_set_gpio_pull_select_chip(unsigned long pin, unsigned long select)
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_pull_select_chip(unsigned long pin)
 {
-    unsigned long bit_pu,bit_pd,pull_sel;
+	unsigned long bit_pu,bit_pd,pull_sel;
 
-    bit_pu = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_pu);
-    bit_pd = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_pd);
-    pull_sel = (bit_pd | bit_pu << 1);
+	bit_pu = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_pu);
+	bit_pd = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_pd);
+	pull_sel = (bit_pd | bit_pu << 1);
 
 	if (pull_sel == 0x02)
 		pull_sel = GPIO_PULL_UP;
@@ -162,22 +163,23 @@ int mt_get_gpio_pull_select_chip(unsigned long pin)
 /*---------------------------------------------------------------------------*/
 int mt_set_gpio_out_chip(unsigned long pin, unsigned long output)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    if (output >= GPIO_OUT_MAX)
-        return -ERINVAL;
+	if (output >= GPIO_OUT_MAX)
+		return -ERINVAL;
 
 	mtk_pinctrl_set_gpio_value(pin, output, MAX_GPIO_PIN, mtk_pin_info_dataout);
-    return RSUCCESS;
+
+	return RSUCCESS;
 }
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_out_chip(unsigned long pin)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_dataout);
+	return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_dataout);
 }
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_in_chip(unsigned long pin)
@@ -190,30 +192,31 @@ int mt_get_gpio_in_chip(unsigned long pin)
 /*---------------------------------------------------------------------------*/
 int mt_set_gpio_mode_chip(unsigned long pin, unsigned long mode)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    if (mode >= GPIO_MODE_MAX)
-        return -ERINVAL;
+	if (mode >= GPIO_MODE_MAX)
+		return -ERINVAL;
 
-    mtk_pinctrl_update_gpio_value(pin, mode, MAX_GPIO_PIN, mtk_pin_info_mode);
-    return RSUCCESS;
+	mtk_pinctrl_update_gpio_value(pin, mode, MAX_GPIO_PIN, mtk_pin_info_mode);
+
+	return RSUCCESS;
 }
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_mode_chip(unsigned long pin)
 {
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_mode);
+	return mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_mode);
 }
 /*---------------------------------------------------------------------------*/
 int mt_set_gpio_drving_chip(unsigned long pin,unsigned long drv)
 {
 	unsigned long drv_e4, drv_e8;
 
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+    	if (pin >= MAX_GPIO_PIN)
+        	return -ERINVAL;
 
 	drv_e4 = drv & 0x1;
 	drv_e8 = (drv & 0x2) >> 1;
@@ -221,20 +224,20 @@ int mt_set_gpio_drving_chip(unsigned long pin,unsigned long drv)
 	mtk_pinctrl_set_gpio_value(pin, drv_e4, MAX_GPIO_PIN, mtk_pin_info_drve4);
 	mtk_pinctrl_set_gpio_value(pin, drv_e8, MAX_GPIO_PIN, mtk_pin_info_drve8);
 
-    return RSUCCESS;
+	return RSUCCESS;
 }
 /*---------------------------------------------------------------------------*/
 int mt_get_gpio_drving_chip(unsigned long pin)
 {
 	unsigned long drv_e4, drv_e8;
 
-    if (pin >= MAX_GPIO_PIN)
-        return -ERINVAL;
+	if (pin >= MAX_GPIO_PIN)
+		return -ERINVAL;
 
-    drv_e4 = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_drve4);
-    drv_e8 = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_drve8);
+	drv_e4 = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_drve4);
+	drv_e8 = mtk_pinctrl_get_gpio_value(pin, MAX_GPIO_PIN, mtk_pin_info_drve8);
 
-    return ((drv_e4)|(drv_e8<<1));
+	return ((drv_e4)|(drv_e8<<1));
 }
 /*---------------------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
