@@ -7,9 +7,9 @@
  * reproduction, modification, use or disclosure of MediaTek Software, and
  * information contained herein, in whole or in part, shall be strictly
  * prohibited.
- * 
+ *
  * MediaTek Inc. (C) 2010. All rights reserved.
- * 
+ *
  * BY OPENING THIS FILE, RECEIVER HEREBY UNEQUIVOCALLY ACKNOWLEDGES AND AGREES
  * THAT THE SOFTWARE/FIRMWARE AND ITS DOCUMENTATIONS ("MEDIATEK SOFTWARE")
  * RECEIVED FROM MEDIATEK AND/OR ITS REPRESENTATIVES ARE PROVIDED TO RECEIVER
@@ -66,12 +66,12 @@ static const unsigned char tran_mant[] = {
     0,  10, 12, 13, 15, 20, 25, 30,
     35, 40, 45, 50, 55, 60, 70, 80,
 };
-
+/*
 static const unsigned char mmc_tran_mant[] = {
     0,  10, 12, 13, 15, 20, 26, 30,
     35, 40, 45, 52, 55, 60, 70, 80,
 };
-
+*/
 static const unsigned int tacc_exp[] = {
     1,  10, 100,    1000,   10000,  100000, 1000000, 10000000,
 };
@@ -1575,7 +1575,7 @@ static int mmc_read_scrs(struct mmc_host *host, struct mmc_card *card)
     scr->cmd_support = UNSTUFF_BITS(resp, 32, 2);
     MSDC_TRC_PRINT(MSDC_INFO,("[SD%d] SD_SPEC(%d) SD_SPEC3(%d) SD_BUS_WIDTH=%d\n",
         							mmc_card_id(card), scr->sda_vsn, scr->sda_vsn3, scr->bus_widths));
-	
+
     MSDC_TRC_PRINT(MSDC_INFO,("[SD%d] SD_SECU(%d) EX_SECU(%d), CMD_SUPP(%d): CMD23(%d), CMD20(%d)\n",
        								 mmc_card_id(card), scr->security, scr->ex_security, scr->cmd_support,
         												(scr->cmd_support >> 1) & 0x1, scr->cmd_support & 0x1));
@@ -1586,49 +1586,49 @@ static int mmc_read_scrs(struct mmc_host *host, struct mmc_card *card)
 /* Read and decode extended CSD. */
 int mmc_read_ext_csd(struct mmc_host *host, struct mmc_card *card)
 {
-    int err = MMC_ERR_NONE;
-    u32 *ptr;
+	int err = MMC_ERR_NONE;
+	u32 *ptr;
 	int result = MMC_ERR_NONE;
-    struct mmc_command cmd;
+	struct mmc_command cmd;
 
-    if (card->csd.mmca_vsn < CSD_SPEC_VER_4) {
-        MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] MMCA_VSN: %d. Skip EXT_CSD\n",host->id, card->csd.mmca_vsn));
-        return MMC_ERR_NONE;
-    }
-
-    /*
-     * As the ext_csd is so large and mostly unused, we don't store the
-     * raw block in mmc_card.
-     */
-    memset(&card->raw_ext_csd[0], 0, 512);
-    ptr = (u32*)&card->raw_ext_csd[0];
-
-    cmd.opcode  = MMC_CMD_SEND_EXT_CSD;
-    cmd.arg     = 0;
-    cmd.rsptyp  = RESP_R1;
-    cmd.retries = CMD_RETRIES;
-    cmd.timeout = CMD_TIMEOUT;
-	msdc_reset_tune_counter(host);
-do{
-    msdc_set_blknum(host, 1);
-    msdc_set_blklen(host, 512);
-    msdc_set_timeout(host, 100000000, 0);
-    err = mmc_cmd(host, &cmd);
-    if (err != MMC_ERR_NONE)
-        goto out;
-
-    err = msdc_pio_read(host, ptr, 512);
-    if (err != MMC_ERR_NONE){
-       	if(msdc_abort_handler(host, 1))
-			MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] data abort failed\n",host->id));
-		result = msdc_tune_read(host);
+	if (card->csd.mmca_vsn < CSD_SPEC_VER_4) {
+		MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] MMCA_VSN: %d. Skip EXT_CSD\n",host->id, card->csd.mmca_vsn));
+		return MMC_ERR_NONE;
 	}
-}while(err && result != MMC_ERR_READTUNEFAIL);
+
+	/*
+	 * As the ext_csd is so large and mostly unused, we don't store the
+	 * raw block in mmc_card.
+	 */
+	memset(&card->raw_ext_csd[0], 0, 512);
+ 	ptr = (u32*)&card->raw_ext_csd[0];
+
+	cmd.opcode  = MMC_CMD_SEND_EXT_CSD;
+	cmd.arg     = 0;
+	cmd.rsptyp  = RESP_R1;
+	cmd.retries = CMD_RETRIES;
+	cmd.timeout = CMD_TIMEOUT;
 	msdc_reset_tune_counter(host);
-    mmc_decode_ext_csd(card);
+	do{
+		msdc_set_blknum(host, 1);
+		msdc_set_blklen(host, 512);
+		msdc_set_timeout(host, 100000000, 0);
+		err = mmc_cmd(host, &cmd);
+		if (err != MMC_ERR_NONE)
+			goto out;
+
+		err = msdc_pio_read(host, ptr, 512);
+		if (err != MMC_ERR_NONE){
+			if(msdc_abort_handler(host, 1))
+				MSDC_ERR_PRINT(MSDC_ERROR,("[SD%d] data abort failed\n",host->id));
+			result = msdc_tune_read(host);
+		}
+	}while(err && result != MMC_ERR_READTUNEFAIL);
+	msdc_reset_tune_counter(host);
+	mmc_decode_ext_csd(card);
 
 out:
-    return err;
+	return err;
 }
 
 /* Fetches and decodes switch information */
@@ -4150,7 +4150,7 @@ out:
         MSDC_ERR_PRINT(MSDC_ERROR,("[%s]: failed, err=%d\n", __func__, err));
         return err;
     }
-    host->card = card;    
+    host->card = card;
     MSDC_TRC_PRINT(MSDC_INIT,("[%s]: finish successfully\n",__func__));
     return 0;
 }
@@ -4165,30 +4165,30 @@ int mmc_init_host(struct mmc_host *host, int id)
 #if 1
 
 int __mmc_init(int id)
-{   
-    int err = MMC_ERR_NONE;
-    struct mmc_host *host;
-    struct mmc_card *card;
+{
+	int err = MMC_ERR_NONE;
+	struct mmc_host *host;
+	struct mmc_card *card;
 
-    MSDC_ASSERT(id < NR_MMC);
+	MSDC_ASSERT(id < NR_MMC);
 
-    host = &sd_host[id];
-    card = &sd_card[id];
-    err = mmc_init_host(host, id);
-    if (err == MMC_ERR_NONE)
-        MSDC_TRC_PRINT(MSDC_INFO,("[%s]: msdc%d mmc_init_host() finished and start mmc_init_card()\n", __func__, id));
-        err = mmc_init_card(host, card);
+	host = &sd_host[id];
+	card = &sd_card[id];
+	err = mmc_init_host(host, id);
+	if (err == MMC_ERR_NONE)
+		MSDC_TRC_PRINT(MSDC_INFO,("[%s]: msdc%d mmc_init_host() finished and start mmc_init_card()\n", __func__, id));
+	err = mmc_init_card(host, card);
 
-#ifdef MTK_EMMC_SUPPORT_OTP 
-    MSDC_TRC_PRINT(MSDC_INIT,("[%s]: msdc%d, use hc erase size\n", __func__, id));
-    mmc_set_erase_grp_def(card, 1);
+#ifdef MTK_EMMC_SUPPORT_OTP
+	MSDC_TRC_PRINT(MSDC_INIT,("[%s]: msdc%d, use hc erase size\n", __func__, id));
+	mmc_set_erase_grp_def(card, 1);
 #endif
 
 #ifdef MMC_TEST
     //mmc_test(0, NULL);
 #endif
 
-    return err;
+	return err;
 }
 
 #else
