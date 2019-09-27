@@ -546,7 +546,9 @@ else
 
 endif # $(dot-config)
 
-KBUILD_CFLAGS += -Os #-fomit-frame-pointer
+OPTFLAGS=-fno-store-merging
+
+KBUILD_CFLAGS += -Os $(OPTFLAGS) #-fomit-frame-pointer
 
 ifdef BUILD_TAG
 KBUILD_CFLAGS += -DBUILD_TAG='"$(BUILD_TAG)"'
