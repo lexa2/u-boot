@@ -49,6 +49,10 @@
 # define __inline__	__inline__	__attribute__((always_inline))
 # define __inline	__inline	__attribute__((always_inline))
 */
+/* XXX: check __GNUC_STDC_INLINE__, fix line length */
+# define inline                inline          __attribute__((always_inline)) __attribute__((__gnu_inline__))
+# define __inline__    __inline__      __attribute__((always_inline)) __attribute__((__gnu_inline__))
+# define __inline      __inline        __attribute__((always_inline)) __attribute__((__gnu_inline__))
 #endif
 
 #define __deprecated			__attribute__((deprecated))
