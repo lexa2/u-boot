@@ -657,7 +657,7 @@
     "loadbootenv=fatload ${device} ${partition} ${scriptaddr} ${bpi}/${board}/${service}/${bootenv} || fatload ${device} ${partition} ${scriptaddr} ${bootenv}\0" \
     "reloadmenu=run loadenv; bootmenu;\0" \
     "loadenv=if run checksd; then echo Boot from SD ; setenv partition 1:1; else echo Boot from eMMC ; mmc init 0 ; setenv partition 0:1;setenv root /dev/mmcblk1p2 ; fi; if run loadbootenv; then echo Loaded environment from ${bootenv}; env import -t ${scriptaddr} ${filesize}; fi;\0" \
-    "boot_normal=if run checksd; then echo Boot from SD ; setenv partition 1:1; else echo Boot from eMMC ; mmc init 0 ; setenv partition 0:1 ; fi; if run loadbootenv; then echo Loaded environment from ${bootenv}; env import -t ${scriptaddr} ${filesize}; fi; run uenvcmd; fatload mmc 0:1 ${loadaddr} ${bpi}/${board}/${service}/${kernel}; bootm\0" \
+    "boot_normal=if run checksd; then echo Boot from SD ; setenv partition 1:1; else echo Boot from eMMC ; mmc init 0 ; setenv partition 0:1 ; fi; if run loadbootenv; then echo Loaded environment from ${bootenv}; env import -t ${scriptaddr} ${filesize}; fi; run uenvcmd;\0" \
     "bootnet=setenv bootargs ${netbootargs};tftp $kaddr ${bootfile};tftp $dtaddr ${bootdtbfile};bootm $kaddr - $dtaddr\0" \
     "uenvcmd=run abootargs aload_fdt aload_kernel aboot\0" \
     "bootcmd=setenv bootdelay 5;run reloadmenu;\0" \
