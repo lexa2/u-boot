@@ -137,18 +137,19 @@ choice 'Flash Type' "NAND ON_BOARD_NAND_FLASH_COMPONENT \
                      eMMC ON_BOARD_EMMC_COMPONENT \
                      SD OFF_BOARD_SD_CARD_COMPONENT \
 					 NONE ON_BOARD_NO_FLASH_COMPONENT
-		    " SNAND
+		    " SD
 
 if [ "$ON_BOARD_NAND_FLASH_COMPONENT" = "y" ]; then
 define_bool CONFIG_MTK_MTD_NAND y
 define_bool CONFIG_MTK_SLC_NAND_SUPPORT y
 fi
 
-if [ "$ON_BOARD_SPI_NAND_FLASH_COMPONENT" = "y" ]; then
+#if [ "$ON_BOARD_SPI_NAND_FLASH_COMPONENT" = "y" ]; then
+define_bool ON_BOARD_NO_FLASH_COMPONENT n
 define_bool CONFIG_MTK_MTD_NAND y
 define_bool CONFIG_MTK_SLC_NAND_SUPPORT y
 define_bool CONFIG_MTK_SPI_NAND_SUPPORT y
-fi
+#fi
 
 #-----------------------
 # MT7622 DDR
@@ -158,14 +159,14 @@ choice 'DDR Component' " 512Mb ON_BOARD_512Mb_DRAM_COMPONENT \
 			2048Mb ON_BOARD_2048Mb_DRAM_COMPONENT \
 			4096Mb ON_BOARD_4096Mb_DRAM_COMPONENT \
 			8192Mb ON_BOARD_8192Mb_DRAM_COMPONENT
-			" 4096Mb
+			" 8192Mb
 
 #-----------------------
 # MT7622 Ethernet
 #-----------------------			
 choice 'Use GE1 or GE2' "GMAC1 CONFIG_USE_GE1  \
 	                 GMAC2 CONFIG_USE_GE2
-			" GMAC2
+			" GMAC1
 if [ "$CONFIG_USE_GE1" = "y" ]; then
 choice 'GE1 connected to' "GE_MII_FORCE_100	 GE_MII_FORCE_100 \
 		           GE_RVMII_FORCE_100    GE_RVMII_FORCE_100 \
@@ -175,7 +176,7 @@ choice 'GE1 connected to' "GE_MII_FORCE_100	 GE_MII_FORCE_100 \
 			   GE_TRGMII_FORCE_2600  CONFIG_GE1_TRGMII_FORCE_2600 \
 			   GE_SGMII_FORCE_2500	 CONFIG_GE1_SGMII_FORCE_2500 \
 			   GE_ESW	 	 CONFIG_GE1_ESW
-			  " GE_RGMII_AN
+			  " GE_SGMII_FORCE_2500
 else
 choice 'GE2 connected to' " GE_MII_FORCE_100		GE_MII_FORCE_100 \
 			    GE_RVMII_FORCE_100		GE_RVMII_FORCE_100 \
