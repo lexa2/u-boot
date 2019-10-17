@@ -4259,9 +4259,9 @@ int mmc_legacy_init(int verbose)
 }
 #endif
 
-int mmc_info_helper(unsigned int *lba, char* vendor, char *product, char *revision){
+int mmc_info_helper(int id, unsigned int *lba, char* vendor, char *product, char *revision){
 
-    struct mmc_card *mmc = &sd_card[1];
+    struct mmc_card *mmc = &sd_card[id];
     
     *lba = mmc->nblks;
 
