@@ -459,7 +459,7 @@ void board_init_f(ulong bootflag)
 	gd->relocaddr = addr;
 	gd->start_addr_sp = addr_sp;
 	gd->reloc_off = addr - (ulong)&_start;
-	debug("relocation Offset is: %08lx\n", gd->reloc_off);
+	printf("relocation Offset is: %08lx\n", gd->reloc_off);
 	if (new_fdt) {
 		memcpy(new_fdt, gd->fdt_blob, fdt_size);
 		gd->fdt_blob = new_fdt;
@@ -559,7 +559,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 #endif
 	serial_initialize();
 
-	debug("Now running in RAM - U-Boot at: %08lx\n", dest_addr);
+	printf("Now running in RAM - U-Boot at: %08lx\n", dest_addr);
 
 #ifdef CONFIG_LOGBUFFER
 	logbuff_init_ptrs();
