@@ -101,3 +101,8 @@ GTAGS
 *.orig
 *~
 \#*#
+
+
+.config
+autoconf.h
+include/configs/autoconf.h
