@@ -33,7 +33,7 @@ case $1 in
 	"build")
 		LANG=C
 		CFLAGS=-j$(grep ^processor /proc/cpuinfo  | wc -l)
-		make LOCALVERSION="-$ubranch" ${CFLAGS} 2> build.log;
+		make LOCALVERSION="-$ubranch" ${CFLAGS} 2> >(tee "build.log")
 		if [[ $? -eq 0 ]];then
 			FILESIZE=$(stat -c%s "u-boot.bin");
 			if [[ $FILESIZE -gt $MAXSIZE ]]; then
