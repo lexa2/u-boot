@@ -15,9 +15,11 @@ fi
 #values in kB
 if [[ "$board" == "bpi-r64" ]];then
 	UBOOT_START=768
+	UBOOT_FILE=u-boot-mtk.bin
 	ENV_START=1280 #ENV_OFFSET = 0x140000
 else
 	UBOOT_START=320
+	UBOOT_FILE=u-boot.bin
 	ENV_START=1024 #ENV_OFFSET = 0x100000
 fi
 MAXSIZE=$(( ($ENV_START - $UBOOT_START)*1024 -1 ))
@@ -80,8 +82,8 @@ case $1 in
 			read -e -p "this device seems not to be a BPI-R2 SD-Card, do you really want to use this device? [yn]" choice
 		fi
 		if [[ "$choice" == "y" ]];then
-			echo "writing to $dev"
-			sudo dd of=$dev if=u-boot.bin bs=1k seek=$UBOOT_START;
+			echo "writing to $dev ($UBOOT_FILE to ${UBOOT_START}k)"
+			sudo dd of=$dev if=$UBOOT_FILE bs=1k seek=$UBOOT_START;
 			sync
 		fi
 	;;
