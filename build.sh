@@ -7,16 +7,20 @@ ubranch=$(git branch --contains $(git log -n 1 --pretty='%h') | grep -v '(HEAD' 
 
 echo "ver:$uver,ubranch:$ubranch"
 
-#values in kB
-UBOOT_START=320
-ENV_START=1024
-
-MAXSIZE=$(( ($ENV_START - $UBOOT_START)*1024 -1 ))
-
 if [[ -e "build.conf" ]];
 then
 	. build.conf
 fi
+
+#values in kB
+if [[ "$board" == "bpi-r64" ]];then
+	UBOOT_START=768
+	ENV_START=1280 #ENV_OFFSET = 0x140000
+else
+	UBOOT_START=320
+	ENV_START=1024 #ENV_OFFSET = 0x100000
+fi
+MAXSIZE=$(( ($ENV_START - $UBOOT_START)*1024 -1 ))
 
 function upload {
 	imagename="u-boot_${uver}-${ubranch}.bin"
@@ -26,7 +30,13 @@ function upload {
 	echo "Name: $imagename"
 	echo "uploading to ${uploadserver}:${uploaddir}..."
 
-	scp u-boot.bin ${uploaduser}@${uploadserver}:${uploaddir}/${imagename}
+	srcfile=u-boot.bin
+
+	if [[ "$board" == "bpi-r64" ]];then
+		srcfile=u-boot-mtk.bin
+	fi
+	echo $srcfile
+	scp ${srcfile} ${uploaduser}@${uploadserver}:${uploaddir}/${imagename}
 }
 
 case $1 in
@@ -49,10 +59,18 @@ case $1 in
 		make menuconfig;
 	;;
 	"importconfig")
-		make mt7623n_bpir2_defconfig;
+		if [[ "$board" == "bpi-r64" ]];then
+			make mt7622_bpir64_efi_defconfig
+		else
+			make mt7623n_bpir2_defconfig;
+		fi
 	;;
 	"defconfig")
-		nano configs/mt7623n_bpir2_defconfig;
+		if [[ "$board" == "bpi-r64" ]];then
+			nano configs/mt7622_bpir64_efi_defconfig;
+		else
+			nano configs/mt7623n_bpir2_defconfig;
+		fi
 	;;
 	"install")
 		dev=/dev/sdb
@@ -63,7 +81,7 @@ case $1 in
 		fi
 		if [[ "$choice" == "y" ]];then
 			echo "writing to $dev"
-			sudo dd of=$dev if=u-boot.bin bs=1k seek=320;
+			sudo dd of=$dev if=u-boot.bin bs=1k seek=$UBOOT_START;
 			sync
 		fi
 	;;
@@ -72,19 +90,39 @@ case $1 in
 		umount /media/$USER/BPI-ROOT
 	;;
 	"uenv")
-		nano /media/$USER/BPI-BOOT/bananapi/bpi-r2/linux/uEnv.txt
+		if [[ "$board" == "bpi-r64" ]];then
+			nano /media/$USER/BPI-BOOT/bananapi/bpi-r64/linux/uEnv.txt
+		else
+			nano /media/$USER/BPI-BOOT/bananapi/bpi-r2/linux/uEnv.txt
+		fi
 	;;
 	"board")
-		nano board/mediatek/mt7623/mt7623_rfb.c
+		if [[ "$board" == "bpi-r64" ]];then
+			nano board/mediatek/mt7622/mt7622_evb.c
+		else
+			nano board/mediatek/mt7623/mt7623_rfb.c
+		fi
 	;;
 	"dts")
-		nano arch/arm/dts/mt7623n-bananapi-bpi-r2.dts
+		if [[ "$board" == "bpi-r64" ]];then
+			nano arch/arm/dts/mt7622-bananapi-bpi-r64.dts
+		else
+			nano arch/arm/dts/mt7623n-bananapi-bpi-r2.dts
+		fi
 	;;
 	"dtsi")
-		nano arch/arm/dts/mt7623.dtsi
+		if [[ "$board" == "bpi-r64" ]];then
+			nano arch/arm/dts/mt7622.dtsi
+		else
+			nano arch/arm/dts/mt7623.dtsi
+		fi
 	;;
 	"soc")
-		nano ./include/configs/mt7623.h
+		if [[ "$board" == "bpi-r64" ]];then
+			nano ./include/configs/mt7622.h
+		else
+			nano ./include/configs/mt7623.h
+		fi
 	;;
 	"upload")
 		upload
