@@ -11,6 +11,8 @@
 
 #include <linux/sizes.h>
 
+#define CONFIG_ENV_SIZE				SZ_4K
+
 /* Machine ID */
 #define CONFIG_SYS_NONCACHED_MEMORY		SZ_1M
 
@@ -37,6 +39,7 @@
 /* ENV Setting */
 #if defined(CONFIG_MMC_MTK)
 #define CONFIG_SYS_MMC_ENV_DEV			0
+#define CONFIG_ENV_OFFSET			0x4E60000
 #define CONFIG_ENV_OVERWRITE
 
 /* MMC offset in block unit,and block size is 0x200 */
