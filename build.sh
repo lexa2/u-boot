@@ -7,6 +7,8 @@ ubranch=$(git branch --contains $(git log -n 1 --pretty='%h') | grep -v '(HEAD' 
 
 echo "ver:$uver,ubranch:$ubranch"
 
+#sudo apt-get install python3-dev
+
 #values in kB
 UBOOT_START=320
 ENV_START=1024
