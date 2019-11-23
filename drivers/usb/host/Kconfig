@@ -88,6 +88,12 @@ config USB_XHCI_FSL
 	depends on !SPL_NO_USB
 	help
 	  Enables support for the on-chip xHCI controller on NXP Layerscape SoCs.
+
+config USB_XHCI_MTK
+	bool "Support for Mediatek xHCI USB controller"
+	help
+	  Enables support for the on-chip xHCI controller on MTK SoCs 
+
 endif # USB_XHCI_HCD
 
 config USB_EHCI_HCD
