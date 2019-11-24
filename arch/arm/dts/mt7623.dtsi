@@ -418,7 +418,7 @@
 		clocks = <&hifsys CLK_HIFSYS_USB0PHY>,
 			 <&topckgen CLK_TOP_ETHIF_SEL>;
 		clock-names = "sys_ck", "ref_ck";
-		/* power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>; */
+		power-domains = <&scpsys MT7623_POWER_DOMAIN_HIF>;
 		phys = <&u2port0 PHY_TYPE_USB2>, <&u3port0 PHY_TYPE_USB3>;
 		status = "disabled";
 	};
@@ -433,7 +433,7 @@
 		clocks = <&hifsys CLK_HIFSYS_USB1PHY>,
 			 <&topckgen CLK_TOP_ETHIF_SEL>;
 		clock-names = "sys_ck", "ref_ck";
-		/* power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>; */
+		power-domains = <&scpsys MT7623_POWER_DOMAIN_HIF>;
 		phys = <&u2port1 PHY_TYPE_USB2>, <&u3port1 PHY_TYPE_USB3>;
 		status = "disabled";
 	};
