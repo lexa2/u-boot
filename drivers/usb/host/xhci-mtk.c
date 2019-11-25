@@ -36,7 +36,11 @@ struct mtk_xhci_platdata { // xhci_hcd_mtk
         struct udevice *vbus;
         struct clk *sys_clk;    // sys and mac clock
         struct clk *ref_clk;
+
+	struct xhci_hccr *hccr; //base-adress
+	struct xhci_hcor *hcor; //hccr+len
 };
+
 /*
 struct xhci_hcd_mtk {
         struct device *dev;
@@ -73,7 +77,7 @@ static int mtk_xhci_probe(struct udevice *dev)
 
 	int ret,err;
 
-	printf("%s %d",__FUNCTION__,__LINE__);
+	printf("%s %d: %s\n",__FUNCTION__,__LINE__,ofnode_get_name(dev_ofnode(dev)));
 
 
 /*
@@ -126,6 +130,26 @@ static int mtk_xhci_probe(struct udevice *dev)
 		return err;
 
 	printf ("enabled clock\n");
+
+	mtk->hccr = (struct xhci_hccr *)devfdt_get_addr(dev);
+	if ((int)mtk->hccr == FDT_ADDR_T_NONE) {
+		debug("Can't get the XHCI register base address\n");
+		return -ENXIO;
+	}
+
+	printf ("address: 0x%x\n",(uint32_t)mtk->hccr);
+
+//fdt_addr_t devfdt_get_addr_size_index(struct udevice *dev, int index,fdt_size_t *size);
+
+	for (int i=0;i<2;i++)
+	{
+		fdt_size_t size;
+		fdt_addr_t addr=devfdt_get_addr_size_index(dev,i,&size);
+		if (addr == FDT_ADDR_T_NONE) break;
+
+		printf ("address: 0x%x size:0x%x\n",(int)addr,(int)size);
+	}
+
 /*
 	struct rockchip_xhci_platdata *plat = dev_get_platdata(dev);
 	struct rockchip_xhci *ctx = dev_get_priv(dev);

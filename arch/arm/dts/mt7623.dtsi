@@ -411,8 +411,8 @@
 	usb1: usb@1a1c0000 {
 		compatible = "mediatek,mt7623-xhci",
 			     "mediatek,mt8173-xhci";
-		reg = <0 0x1a1c0000 0 0x1000>,
-		      <0 0x1a1c4700 0 0x0100>;
+		reg = <0x1a1c0000 0x1000>,
+		      <0x1a1c4700 0x0100>;
 		reg-names = "mac", "ippc";
 		interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_LOW>;
 		clocks = <&hifsys CLK_HIFSYS_USB0PHY>,
@@ -426,8 +426,8 @@
 	usb2: usb@1a240000 {
 		compatible = "mediatek,mt7623-xhci",
 			     "mediatek,mt8173-xhci";
-		reg = <0 0x1a240000 0 0x1000>,
-		      <0 0x1a244700 0 0x0100>;
+		reg = <0x1a240000 0x1000>,
+		      <0x1a244700 0x0100>;
 		reg-names = "mac", "ippc";
 		interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_LOW>;
 		clocks = <&hifsys CLK_HIFSYS_USB1PHY>,
