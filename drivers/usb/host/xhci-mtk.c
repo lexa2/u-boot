@@ -34,6 +34,8 @@ struct mtk_xhci_platdata { // xhci_hcd_mtk
         struct device *dev;
         struct udevice *vusb33;
         struct udevice *vbus;
+        struct clk *sys_clk;    // sys and mac clock
+        struct clk *ref_clk;
 };
 /*
 struct xhci_hcd_mtk {
@@ -67,9 +69,9 @@ struct xhci_hcd_mtk {
 static int mtk_xhci_probe(struct udevice *dev)
 {
 	struct mtk_xhci_platdata *mtk = dev_get_platdata(dev);
-	struct udevice *regulator,*regulator2;
+	//struct udevice *regulator,*regulator2;
 
-	int ret;
+	int ret,err;
 
 	printf("%s %d",__FUNCTION__,__LINE__);
 
@@ -98,6 +100,8 @@ static int mtk_xhci_probe(struct udevice *dev)
                 return ret;
 */
 
+//power controlled over powerdomain/hifsys like pcie
+/*
         ret = device_get_supply_regulator(dev, "vbus", &mtk->vbus);
         if (!ret) {
 		//mtk->vbus = regulator;
@@ -110,7 +114,18 @@ static int mtk_xhci_probe(struct udevice *dev)
                 ret = regulator_set_enable(mtk->vusb33, true);
                 if (ret) {}
 	}else printf("cannot get vusb33");
+*/
+	err = clk_get_by_name(dev, "sys_ck", mtk->sys_clk);
+	if (err)
+		return err;
 
+	printf ("got clock\n");
+	/* enable sys clock */
+	err = clk_enable(mtk->sys_clk);
+	if (err)
+		return err;
+
+	printf ("enabled clock\n");
 /*
 	struct rockchip_xhci_platdata *plat = dev_get_platdata(dev);
 	struct rockchip_xhci *ctx = dev_get_priv(dev);
