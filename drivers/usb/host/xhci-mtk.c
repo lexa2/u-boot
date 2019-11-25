@@ -1,196 +1,184 @@
-// SPDX-License-Identifier: GPL-2.0
+// SPDX-License-Identifier: GPL-2.0+
 /*
- * Copyright (c) 2015 - 2019 MediaTek Inc.
- * Author: Frank Wunderlich <frank-w@public-files.de>
+ * Copyright (C) 2015 Marvell International Ltd.
+ *
+ * MVEBU USB HOST xHCI Controller
  */
 
 #include <common.h>
-#include <clk.h>
 #include <dm.h>
-#include <mapmem.h>
-#include <asm/io.h>
-
-#include <malloc.h>
+#include <fdtdec.h>
+#include <generic-phy.h>
 #include <usb.h>
-#include <watchdog.h>
-#include <linux/errno.h>
-#include <linux/compat.h>
-#include <linux/usb/dwc3.h>
 #include <power/regulator.h>
 #include <asm/gpio.h>
 
 #include <usb/xhci.h>
+//#include "xhci.h"
 
+#define	MTK_XHCI_IP_PW_CTR0	0x00
+#define 	CTRL0_IP_SW_RST		(1 << 0)
+#define	MTK_XHCI_IP_PW_CTR1	0x04
+#define 	CTRL1_IP_HOST_PDN	(1 << 0)
+#define	MTK_XHCI_IP_PW_CTR2	0x08
+#define 	CTRL2_IP_DEV_PDN	(1 << 0)
+#define	MTK_XHCI_IP_PW_CTR3	0x0c
+#define	MTK_XHCI_IP_PW_STS1	0x10
+#define 	STS1_IP_SLEEP_STS	(1 << 30)
+#define 	STS1_XHCI_RST		(1 << 11)
+#define 	STS1_SYS125_RST		(1 << 10)
+#define 	STS1_REF_RST		(1 << 8)
+#define 	STS1_SYSPLL_STABLE	(1 << 0)
+#define	MTK_XHCI_IP_PW_STS2	0x14
+#define	MTK_XHCI_IP_XHCI_CAP	0x24
+#define 	CAP_U3_PORT_NUM(p)	((p) & 0xff)
+#define 	CAP_U2_PORT_NUM(p)	(((p) >> 8) & 0xff)
+#define	MTK_XHCI_U3_CTRL_P(x)	(((x) * 8) + 0x30)
+#define 	CTRL_PORT_HOST_SEL	(1 << 2)
+#define 	CTRL_PORT_PDN	(1 << 1)
+#define 	CTRL_PORT_DIS	(1 << 0)
+#define	MTK_XHCI_U2_CTRL_P(x)	(((x) * 8) + 0x50)
+#define	MTK_XHCI_U2_PHY_PLL	0x7c
+#define 	CTRL_U2_FORCE_PLL_STB	(1 << 28)
 
+struct mtk_xhci_platdata {
+	fdt_addr_t hcd_base;
+	fdt_addr_t ippc_base;
+	int u3ports;
+	int u2ports;
+};
 
+/**
+ * Contains pointers to register base addresses
+ * for the usb controller.
+ */
 struct mtk_xhci {
-	/*struct usb_platdata usb_plat;
-	struct xhci_ctrl ctrl;
+	struct xhci_ctrl ctrl;	/* Needs to come first in this struct! */
+	struct usb_platdata usb_plat;
 	struct xhci_hccr *hcd;
-	struct dwc3 *dwc3_reg;*/
+	struct phy phy;
 };
 
-struct mtk_xhci_platdata { // xhci_hcd_mtk
-        struct device *dev;
-        struct udevice *vusb33;
-        struct udevice *vbus;
-        struct clk *sys_clk;    // sys and mac clock
-        struct clk *ref_clk;
+#define	IPPCRD4(p, x)    readl((p)->ippc_base + (x))
+#define	IPPCWR4(p, x, v) writel((v), (p)->ippc_base + (x))
 
-	struct xhci_hccr *hccr; //base-adress
-	struct xhci_hcor *hcor; //hccr+len
-};
-
-/*
-struct xhci_hcd_mtk {
-        struct device *dev;
-        struct usb_hcd *hcd;
-        struct mu3h_sch_bw_info *sch_array;
-        struct mu3c_ippc_regs __iomem *ippc_regs;
-        bool has_ippc;
-        int num_u2_ports;
-        int num_u3_ports;
-        int u3p_dis_msk;
-        struct regulator *vusb33;
-        struct regulator *vbus;
-        struct clk *sys_clk;    // sys and mac clock
-        struct clk *xhci_clk;
-        struct clk *ref_clk;
-        struct clk *mcu_clk;
-        struct clk *dma_clk;
-        struct regmap *pericfg;
-        struct phy **phys;
-        int num_phys;
-        bool lpm_support;
-        // usb remote wakeup
-        bool uwk_en;
-        struct regmap *uwk;
-        u32 uwk_reg_base;
-        u32 uwk_vers;
-};
-*/
-
-static int mtk_xhci_probe(struct udevice *dev)
+static void
+mtk_xhci_enable_core(struct mtk_xhci_platdata *plat)
 {
-	struct mtk_xhci_platdata *mtk = dev_get_platdata(dev);
-	//struct udevice *regulator,*regulator2;
+	u32 val;
+	int i;
 
-	int ret,err;
+	val = IPPCRD4(plat, MTK_XHCI_IP_XHCI_CAP);
+	plat->u3ports = CAP_U3_PORT_NUM(val);
+	plat->u2ports = CAP_U2_PORT_NUM(val);
 
-	printf("%s %d: %s\n",__FUNCTION__,__LINE__,ofnode_get_name(dev_ofnode(dev)));
+	/* Clear reset bit. */
+	IPPCWR4(plat, MTK_XHCI_IP_PW_CTR1, IPPCRD4(plat, MTK_XHCI_IP_PW_CTR1) &
+	    ~CTRL1_IP_HOST_PDN);
 
+	for (i = 0; i < plat->u3ports; i++) {
+		IPPCWR4(plat, MTK_XHCI_U3_CTRL_P(i),
+		    (IPPCRD4(plat, MTK_XHCI_U3_CTRL_P(i)) &
+		    ~(CTRL_PORT_PDN|CTRL_PORT_DIS)) | CTRL_PORT_HOST_SEL);
+	}
 
-/*
-        mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
-        if (!mtk)
-                return -ENOMEM;
+	for (i = 0; i < plat->u2ports; i++) {
+		IPPCWR4(plat, MTK_XHCI_U2_CTRL_P(i),
+		    (IPPCRD4(plat, MTK_XHCI_U2_CTRL_P(i)) &
+		    ~(CTRL_PORT_PDN|CTRL_PORT_DIS)) | CTRL_PORT_HOST_SEL);
+	}
+	while (IPPCRD4(plat, MTK_XHCI_IP_PW_STS1) & (STS1_XHCI_RST|STS1_SYS125_RST|
+	    STS1_REF_RST|STS1_SYSPLL_STABLE))
+		mdelay(1);
 
-        mtk->dev = dev;
+	IPPCWR4(plat, MTK_XHCI_IP_PW_CTR0, IPPCRD4(plat, MTK_XHCI_IP_PW_CTR0) &
+	    ~CTRL0_IP_SW_RST);
 
-        mtk->vbus = devm_regulator_get(dev, "vbus");
-        if (IS_ERR(mtk->vbus)) {
-                dev_err(dev, "fail to get vbus\n");
-                return PTR_ERR(mtk->vbus);
-        }
+	mdelay(10);
+//	//__le32 ip_pw_sts1;	0x10 6. wait to down bits 0,8,10,11
+//	DELAY(10000);
+}
 
-        mtk->vusb33 = devm_regulator_get(dev, "vusb33");
-        if (IS_ERR(mtk->vusb33)) {
-                dev_err(dev, "fail to get vusb33\n");
-                return PTR_ERR(mtk->vusb33);
-        }
+static int xhci_usb_probe(struct udevice *dev)
+{
+	struct mtk_xhci_platdata *plat = dev_get_platdata(dev);
+	struct mtk_xhci *ctx = dev_get_priv(dev);
+	struct xhci_hcor *hcor;
+	//struct phy *phy;
+	int i, len, ret;
+	struct udevice *regulator;
 
-        ret = xhci_mtk_clks_get(mtk);
-        if (ret)
-                return ret;
-*/
+	ret = device_get_supply_regulator(dev, "vbus-supply", &regulator);
+	if (!ret) {
+		ret = regulator_set_enable(regulator, true);
+		if (ret) {
+			printf("Failed to turn ON the VBUS regulator\n");
+			//return ret;
+		}
+	}
 
-//power controlled over powerdomain/hifsys like pcie
-/*
-        ret = device_get_supply_regulator(dev, "vbus", &mtk->vbus);
-        if (!ret) {
-		//mtk->vbus = regulator;
-                ret = regulator_set_enable(mtk->vbus, true);
-                if (ret) {}
-	}else printf ("cannot get vbus\n");
+	mtk_xhci_enable_core(plat);
 
-        ret = device_get_supply_regulator(dev, "vusb33", &mtk->vusb33);
-        if (!ret) {
-                ret = regulator_set_enable(mtk->vusb33, true);
-                if (ret) {}
-	}else printf("cannot get vusb33");
-*/
-	err = clk_get_by_name(dev, "sys_ck", mtk->sys_clk);
-	if (err)
-		return err;
+	len = plat->u3ports + plat->u2ports;
 
-	printf ("got clock\n");
-	/* enable sys clock */
-	err = clk_enable(mtk->sys_clk);
-	if (err)
-		return err;
+	for (i = 0; i < len; i ++) {
+		printf("%s:%d generic_phy_get_by_index(%d)\n", __func__, __LINE__, i);
+		ret = generic_phy_get_by_index(dev, i, &ctx->phy);
+		if (ret)
+			return ret;
 
-	printf ("enabled clock\n");
+		printf("%s:%d generic_phy_init\n", __func__, __LINE__);
+		ret = generic_phy_init(&ctx->phy);
+		if (ret)
+			return ret;
 
-	mtk->hccr = (struct xhci_hccr *)devfdt_get_addr(dev);
-	if ((int)mtk->hccr == FDT_ADDR_T_NONE) {
+		printf("%s:%d generic_phy_power_on\n", __func__, __LINE__);
+		ret = generic_phy_power_on(&ctx->phy);
+		if (ret)
+			return ret;
+	}
+
+	ctx->hcd = (struct xhci_hccr *)plat->hcd_base;
+	len = HC_LENGTH(xhci_readl(&ctx->hcd->cr_capbase));
+	hcor = (struct xhci_hcor *)((uintptr_t)ctx->hcd + len);
+
+	return xhci_register(dev, ctx->hcd, hcor);
+}
+
+static int xhci_usb_ofdata_to_platdata(struct udevice *dev)
+{
+	struct mtk_xhci_platdata *plat = dev_get_platdata(dev);
+
+//	plat->hcd_base = devfdt_get_addr(dev);
+	plat->hcd_base = dev_read_addr_name(dev, "mac");
+	if (plat->hcd_base == FDT_ADDR_T_NONE) {
 		debug("Can't get the XHCI register base address\n");
 		return -ENXIO;
 	}
 
-	printf ("address: 0x%x\n",(uint32_t)mtk->hccr);
-
-//fdt_addr_t devfdt_get_addr_size_index(struct udevice *dev, int index,fdt_size_t *size);
-
-	for (int i=0;i<2;i++)
-	{
-		fdt_size_t size;
-		fdt_addr_t addr=devfdt_get_addr_size_index(dev,i,&size);
-		if (addr == FDT_ADDR_T_NONE) break;
-
-		printf ("address: 0x%x size:0x%x\n",(int)addr,(int)size);
+	plat->ippc_base = dev_read_addr_name(dev, "ippc");
+	if (plat->ippc_base == FDT_ADDR_T_NONE) {
+		debug("Can't get the XHCI register base address\n");
+		return -ENXIO;
 	}
 
-/*
-	struct rockchip_xhci_platdata *plat = dev_get_platdata(dev);
-	struct rockchip_xhci *ctx = dev_get_priv(dev);
-	struct xhci_hcor *hcor;
-	int ret;
-
-	ctx->hcd = (struct xhci_hccr *)plat->hcd_base;
-	ctx->dwc3_reg = (struct dwc3 *)((char *)(ctx->hcd) + DWC3_REG_OFFSET);
-	hcor = (struct xhci_hcor *)((uint64_t)ctx->hcd +
-			HC_LENGTH(xhci_readl(&ctx->hcd->cr_capbase)));
-
-	if (plat->vbus_supply) {
-		ret = regulator_set_enable(plat->vbus_supply, true);
-		if (ret) {
-			pr_err("XHCI: failed to set VBus supply\n");
-			return ret;
-		}
-	}
-
-	ret = rockchip_xhci_core_init(ctx, dev);
-	if (ret) {
-		pr_err("XHCI: failed to initialize controller\n");
-		return ret;
-	}
-
-	return xhci_register(dev, ctx->hcd, hcor);
-*/
-	return -ENODEV;
+	return 0;
 }
 
-static const struct udevice_id mtk_xhci_id_table[] = {
-	{ .compatible = "mediatek,mt7623-xhci", },
+static const struct udevice_id xhci_usb_ids[] = {
+	{ .compatible = "mediatek,mtk-xhci" },
 	{ }
 };
 
-U_BOOT_DRIVER(mtk_xhci) = {
-	.name		= "mtk-xhci",
-	.id		= UCLASS_USB,
-	.of_match	= mtk_xhci_id_table,
-	//.ops		= &xhci_usb_ops,
-	.probe		= mtk_xhci_probe,
+U_BOOT_DRIVER(usb_xhci) = {
+	.name	= "xhci_mtk",
+	.id	= UCLASS_USB,
+	.of_match = xhci_usb_ids,
+	.ofdata_to_platdata = xhci_usb_ofdata_to_platdata,
+	.probe = xhci_usb_probe,
+	.remove = xhci_deregister,
+	.ops	= &xhci_usb_ops,
 	.platdata_auto_alloc_size = sizeof(struct mtk_xhci_platdata),
 	.priv_auto_alloc_size = sizeof(struct mtk_xhci),
+	.flags	= DM_FLAG_ALLOC_PRIV_DMA,
 };
