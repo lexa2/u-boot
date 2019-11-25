@@ -409,7 +409,8 @@
 	};
 
 	usb1: usb@1a1c0000 {
-		compatible = "mediatek,mt7623-xhci",
+		compatible = "mediatek,mtk-xhci",
+			     "mediatek,mt7623-xhci",
 			     "mediatek,mt8173-xhci";
 		reg = <0x1a1c0000 0x1000>,
 		      <0x1a1c4700 0x0100>;
@@ -424,7 +425,8 @@
 	};
 
 	usb2: usb@1a240000 {
-		compatible = "mediatek,mt7623-xhci",
+		compatible = "mediatek,mtk-xhci",
+			     "mediatek,mt7623-xhci",
 			     "mediatek,mt8173-xhci";
 		reg = <0x1a240000 0x1000>,
 		      <0x1a244700 0x0100>;
