@@ -45,12 +45,36 @@ static int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	return rcode;
 }
 
+static int do_go64(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+{
+	ulong	addr;
+
+	if (argc < 2)
+		return CMD_RET_USAGE;
+
+	addr = simple_strtoul(argv[1], NULL, 16);
+
+	printf ("## Starting application at 0x%08lX ...\n", addr);
+
+#if defined(CONFIG_MTK_ATF)
+	extern void jumparch64_smc(ulong addr, ulong arg1, ulong arg2);
+	jumparch64_smc(addr, 0, 0);
+#endif
+	return 0;
+}
 /* -------------------------------------------------------------------- */
 
 U_BOOT_CMD(
 	go, CONFIG_SYS_MAXARGS, 1,	do_go,
 	"start application at address 'addr'",
 	"addr [arg ...]\n    - start application at address 'addr'\n"
+	"      passing 'arg' as arguments"
+);
+
+U_BOOT_CMD(
+	go64, CONFIG_SYS_MAXARGS, 1,	do_go64,
+	"start 64bit application at address 'addr'",
+	"addr [arg ...]\n    - start 64bit application at address 'addr'\n"
 	"      passing 'arg' as arguments"
 );
 
