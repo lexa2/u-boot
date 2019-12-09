@@ -35,7 +35,7 @@ static struct mm_region mt7622_mem_map[] = {
 		/* DDR */
 		.virt = 0x40000000UL,
 		.phys = 0x40000000UL,
-		.size = 0x20000000UL,
+		.size = 0x40000000UL,
 		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) | PTE_BLOCK_OUTER_SHARE,
 	}, {
 		.virt = 0x00000000UL,
