@@ -135,6 +135,8 @@ enum mtk_switch {
 };
 
 enum mtk_soc {
+	SOC_MT2701,
+	SOC_MT7622,
 	SOC_MT7623,
 	SOC_MT7629
 };
@@ -482,7 +484,7 @@ static void mt7530_core_reg_write(struct mtk_eth_priv *priv, u32 reg, u32 val)
 static int mt7530_pad_clk_setup(struct mtk_eth_priv *priv, int mode)
 {
 	u32 ncpo1, ssc_delta;
-
+return 0;
 	switch (mode) {
 	case PHY_INTERFACE_MODE_RGMII:
 		ncpo1 = 0x0c80;
@@ -867,11 +869,12 @@ static int mtk_eth_start(struct udevice *dev)
 	int ret;
 
 	/* Reset FE */
+/*
 	reset_assert(&priv->rst_fe);
 	udelay(1000);
 	reset_deassert(&priv->rst_fe);
 	mdelay(10);
-
+*/
 	/* Packets forward to PDMA */
 	mtk_gdma_write(priv, priv->gmac_id, GDMA_IG_CTRL_REG, GDMA_FWD_TO_CPU);
 
@@ -1072,12 +1075,13 @@ static int mtk_eth_ofdata_to_platdata(struct udevice *dev)
 	}
 
 	/* Reset controllers */
+/*
 	ret = reset_get_by_name(dev, "fe", &priv->rst_fe);
 	if (ret) {
 		printf("error: Unable to get reset ctrl for frame engine\n");
 		return ret;
 	}
-
+*/
 	priv->gmac_id = dev_read_u32_default(dev, "mediatek,gmac-id", 0);
 
 	/* Interface mode is required */
@@ -1149,8 +1153,10 @@ static int mtk_eth_ofdata_to_platdata(struct udevice *dev)
 }
 
 static const struct udevice_id mtk_eth_ids[] = {
-	{ .compatible = "mediatek,mt7629-eth", .data = SOC_MT7629 },
+	{ .compatible = "mediatek,mt2701-eth", .data = SOC_MT2701 },
+	{ .compatible = "mediatek,mt7622-eth", .data = SOC_MT7622 },
 	{ .compatible = "mediatek,mt7623-eth", .data = SOC_MT7623 },
+	{ .compatible = "mediatek,mt7629-eth", .data = SOC_MT7629 },
 	{}
 };
 

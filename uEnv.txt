@@ -84,5 +84,5 @@ bootmenu_default=2
 reloadmenu=run selectmmc;run loadenv; bootmenu;
 
 #automatic reload from sd/emmc
-bootdelay=0
-bootcmd=setenv bootdelay 3; run reloadmenu;
+#bootdelay=0
+#bootcmd=setenv bootdelay 3; run reloadmenu;
