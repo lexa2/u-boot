@@ -21,8 +21,10 @@ if [[ "$board" == "bpi-r64" ]];then
 	UBOOT_FILE=u-boot-mtk.bin
 	ENV_START=1280 #ENV_OFFSET = 0x140000
 	#official r64-patches are arm64
-	export ARCH=arm64
-	export CROSS_COMPILE=aarch64-linux-gnu-
+	if [[ "$arch" == "arm64" ]];then
+		export ARCH=arm64
+		export CROSS_COMPILE=aarch64-linux-gnu-
+	fi
 else
 	UBOOT_START=320
 	UBOOT_FILE=u-boot.bin
@@ -68,14 +70,22 @@ case $1 in
 	;;
 	"importconfig")
 		if [[ "$board" == "bpi-r64" ]];then
-			make mt7622_rfb_defconfig
+			if [[ "$arch" == "arm64" ]];then
+				make mt7622_rfb_defconfig
+			else
+				make mt7622_rfb_32_defconfig
+			fi
 		else
 			make mt7623n_bpir2_defconfig;
 		fi
 	;;
 	"defconfig")
 		if [[ "$board" == "bpi-r64" ]];then
-			nano configs/mt7622_rfb_defconfig
+			if [[ "$arch" == "arm64" ]];then
+				nano configs/mt7622_rfb_defconfig;
+			else
+				nano configs/mt7622_rfb_32_defconfig;
+			fi
 		else
 			nano configs/mt7623n_bpir2_defconfig;
 		fi
