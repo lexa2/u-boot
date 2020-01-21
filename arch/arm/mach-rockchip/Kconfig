@@ -306,13 +306,13 @@ config SPL_ROCKCHIP_COMMON_BOARD
 	  no TPL for the board.
 
 config TPL_ROCKCHIP_COMMON_BOARD
-	bool ""
+	bool "Rockchip TPL common board file"
 	depends on TPL
 	help
 	  Rockchip SoCs have similar boot process, prefer to use TPL for DRAM
 	  init and back to bootrom, and SPL as Trust ATF/U-Boot loader. TPL
 	  common board is a basic TPL board init which can be shared for most
-	  of SoCs to avoid copy-pase for different SoCs.
+	  of SoCs to avoid copy-paste for different SoCs.
 
 config ROCKCHIP_BOOT_MODE_REG
 	hex "Rockchip boot mode flag register address"

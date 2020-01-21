@@ -424,6 +424,7 @@ config TARGET_NITROGEN6X
 	imply USB_ETHER_MCS7830
 	imply USB_ETHER_SMSC95XX
 	imply USB_HOST_ETHER
+	select MX6QDL
 
 config TARGET_OPOS6ULDEV
 	bool "Armadeus OPOS6ULDev board"
@@ -558,6 +559,7 @@ config TARGET_SOFTING_VINING_2000
 	select DM
 	select DM_THERMAL
 	select MX6SX
+	select SUPPORT_SPL
 	imply CMD_DM
 
 config TARGET_WANDBOARD

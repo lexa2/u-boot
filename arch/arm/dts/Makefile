@@ -68,7 +68,8 @@ dtb-$(CONFIG_ARCH_OWL) += \
 	bubblegum_96.dtb
 
 dtb-$(CONFIG_ROCKCHIP_PX30) += \
-	px30-evb.dtb
+	px30-evb.dtb \
+	px30-firefly.dtb
 
 dtb-$(CONFIG_ROCKCHIP_RK3036) += \
 	rk3036-sdk.dtb
@@ -522,7 +523,8 @@ dtb-$(CONFIG_MACH_SUN8I_H3) += \
 	sun8i-h3-orangepi-pc.dtb \
 	sun8i-h3-orangepi-pc-plus.dtb \
 	sun8i-h3-orangepi-plus.dtb \
-	sun8i-h3-orangepi-plus2e.dtb
+	sun8i-h3-orangepi-plus2e.dtb \
+	sun8i-h3-orangepi-zero-plus2.dtb
 dtb-$(CONFIG_MACH_SUN8I_R40) += \
 	sun8i-r40-bananapi-m2-ultra.dtb \
 	sun8i-v40-bananapi-m2-berry.dtb

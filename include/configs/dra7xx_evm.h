@@ -63,10 +63,8 @@
 #define CONFIG_HSMMC2_8BIT
 
 /* CPSW Ethernet */
-#define CONFIG_BOOTP_DNS2
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NET_RETRY_COUNT		10
-#define CONFIG_PHY_TI
 
 /*
  * Default to using SPI for environment, etc.
@@ -93,7 +91,7 @@
 #define CONFIG_SCSI_AHCI_PLAT
 
 /* NAND support */
-#ifdef CONFIG_NAND
+#ifdef CONFIG_MTD_RAW_NAND
 /* NAND: device related configs */
 #define CONFIG_SYS_NAND_PAGE_SIZE	2048
 #define CONFIG_SYS_NAND_OOBSIZE		64
@@ -120,7 +118,7 @@
 #ifdef CONFIG_SPL_OS_BOOT
 #define CONFIG_SYS_NAND_SPL_KERNEL_OFFS	0x00200000 /* kernel offset */
 #endif
-#endif /* !CONFIG_NAND */
+#endif /* !CONFIG_MTD_RAW_NAND */
 
 /* Parallel NOR Support */
 #if defined(CONFIG_NOR)
