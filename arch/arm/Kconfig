@@ -778,7 +778,6 @@ config ARCH_MESON
 
 config ARCH_MEDIATEK
 	bool "MediaTek SoCs"
-	select BINMAN
 	select DM
 	select OF_CONTROL
 	select SPL_DM if SPL
