@@ -794,6 +794,23 @@ ofnode ofnode_by_prop_value(ofnode from, const char *propname,
 	     node = ofnode_next_subnode(node))
 
 /**
+ * ofnode_get_child_count() - get the child count of a ofnode
+ *
+ * @node:	valid node ot get its child count
+ * @return the count of child subnode
+ */
+static inline int ofnode_get_child_count(ofnode parent)
+{
+	ofnode child;
+	int num = 0;
+
+	ofnode_for_each_subnode(child, parent)
+		num++;
+
+	return num;
+}
+
+/**
  * ofnode_translate_address() - Translate a device-tree address
  *
  * Translate an address from the device-tree into a CPU physical address. This
