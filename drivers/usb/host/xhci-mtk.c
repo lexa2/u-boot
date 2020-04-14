@@ -355,20 +355,27 @@ int xhci_mtk_phy_setup(struct mtk_xhci *mtk)
 	struct phy *usb_phys;
 	int i, ret, count;
 
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	/* Return if no phy declared */
 	if (!dev_read_prop(dev, "phys", NULL))
 		return 0;
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 
 	count = dev_count_phandle_with_args(dev, "phys", "#phy-cells");
+printf("debug: %s %d count:%d\n",__FUNCTION__,__LINE__,count);
 	if (count <= 0)
 		return count;
 
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	usb_phys = devm_kcalloc(dev, count, sizeof(*usb_phys),
 				GFP_KERNEL);
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	if (!usb_phys)
 		return -ENOMEM;
 
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	for (i = 0; i < count; i++) {
+printf("debug: %s %d get phy#%d\n",__FUNCTION__,__LINE__,i);
 		ret = generic_phy_get_by_index(dev, i, &usb_phys[i]);
 		if (ret && ret != -ENOENT) {
 			dev_err(dev, "Failed to get USB PHY%d for %s\n",
@@ -377,7 +384,9 @@ int xhci_mtk_phy_setup(struct mtk_xhci *mtk)
 		}
 	}
 
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	for (i = 0; i < count; i++) {
+printf("debug: %s %d init phy#%d\n",__FUNCTION__,__LINE__,i);
 		ret = generic_phy_init(&usb_phys[i]);
 		if (ret) {
 			dev_err(dev, "Can't init USB PHY%d for %s\n",
@@ -386,6 +395,7 @@ int xhci_mtk_phy_setup(struct mtk_xhci *mtk)
 		}
 	}
 
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	for (i = 0; i < count; i++) {
 		ret = generic_phy_power_on(&usb_phys[i]);
 		if (ret) {
@@ -452,16 +462,21 @@ static int xhci_mtk_probe(struct udevice *dev)
 		goto ldos_err;
 
 	ret = xhci_mtk_clks_enable(mtk);
+printf("debug: %s %d ret:%d\n",__FUNCTION__,__LINE__,ret);
 	if (ret)
 		goto clks_err;
 
 	ret = xhci_mtk_phy_setup(mtk);
+printf("debug: %s %d ret:%d\n",__FUNCTION__,__LINE__,ret);
 	if (ret)
 		goto phys_err;
 
 	ret = xhci_mtk_ssusb_init(mtk);
+printf("debug: %s %d ret:%d\n",__FUNCTION__,__LINE__,ret);
 	if (ret)
 		goto ssusb_init_err;
+
+printf("hc ver: %d\n",HC_VERSION(xhci_readl(&mtk->hcd->cr_capbase)));
 
 	hcor = (struct xhci_hcor *)((uintptr_t)mtk->hcd +
 			HC_LENGTH(xhci_readl(&mtk->hcd->cr_capbase)));
