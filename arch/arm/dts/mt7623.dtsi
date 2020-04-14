@@ -397,20 +397,22 @@
 
 	u3phy1: usb-phy1@1a1c4000 {
 		compatible = "mediatek,mt7623-tphy", "mediatek,generic-tphy-v1";
+
+		reg = <0 0x1a1c4000 0 0x0700>;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges = <0 0x1a1c4000 0x1000>;
+		ranges;
 		status = "disabled";
 
-		u2port0: usb-phy@800 {
-			reg = <0x800 0x0100>;
+		u2port0: usb-phy@1a1c4800 {
+			reg = <0x1a1c4800 0x0100>;
 			#phy-cells = <1>;
 			clocks = <&topckgen CLK_TOP_USB_PHY48M>;
 			clock-names = "ref";
 		};
 
-		u3port0: usb-phy@900 {
-			reg = <0x900 0x0700>;
+		u3port0: usb-phy@1a1c4900 {
+			reg = <0x1a1c4900 0x0700>;
 			#phy-cells = <1>;
 			clocks = <&clk26m>;
 			clock-names = "ref";
@@ -430,20 +432,22 @@
 
 	u3phy2: usb-phy2@1a244000 {
 		compatible = "mediatek,mt7623-tphy", "mediatek,generic-tphy-v1";
+
+		reg = <0 0x1a244000 0 0x0700>;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges = <0 0x1a244000 0x1000>;
+		ranges;
 		status = "disabled";
 
-		u2port1: usb-phy@800 {
-			reg = <0x800 0x0100>;
+		u2port1: usb-phy@1a244800 {
+			reg = <0x1a244800 0x0100>;
 			#phy-cells = <1>;
 			clocks = <&topckgen CLK_TOP_USB_PHY48M>;
 			clock-names = "ref";
 		};
 
-		u3port1: usb-phy@900 {
-			reg = <0x900 0x0700>;
+		u3port1: usb-phy@1a244900 {
+			reg = <0x1a244900 0x0700>;
 			#phy-cells = <1>;
 			clocks = <&clk26m>;
 			clock-names = "ref";
