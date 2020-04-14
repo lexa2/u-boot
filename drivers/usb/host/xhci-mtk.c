@@ -17,6 +17,8 @@
 #include <linux/iopoll.h>
 #include <usb/xhci.h>
 
+#define DEBUG
+
 /* IPPC (IP Port Control) registers */
 #define IPPC_IP_PW_CTRL0		0x00
 #define CTRL0_IP_SW_RST			BIT(0)
@@ -209,13 +211,14 @@ int xhci_mtk_phy_setup(struct mtk_xhci *mtk)
 	struct udevice *dev = mtk->dev;
 	struct phy_bulk *phys = &mtk->phys;
 	int ret;
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	ret = generic_phy_get_bulk(dev, phys);
+printf("debug: %s %d ret:%d\n",__FUNCTION__,__LINE__,ret);
 	if (ret) {
 		dev_err(dev, "failed to get phys %d!\n", ret);
 		return ret;
 	}
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	return generic_phy_enable_bulk(phys);
 }
 
@@ -242,20 +245,20 @@ static int xhci_mtk_probe(struct udevice *dev)
 	ret = clk_enable_bulk(&mtk->clks);
 	if (ret)
 		goto clks_err;
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	ret = xhci_mtk_phy_setup(mtk);
 	if (ret)
 		goto phys_err;
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	ret = xhci_mtk_ssusb_init(mtk);
 	if (ret)
 		goto ssusb_init_err;
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	hcor = (struct xhci_hcor *)((uintptr_t)mtk->hcd +
 			HC_LENGTH(xhci_readl(&mtk->hcd->cr_capbase)));
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	return xhci_register(dev, mtk->hcd, hcor);
-
+printf("hc ver: %d\n",HC_VERSION(xhci_readl(&mtk->hcd->cr_capbase)));
 ssusb_init_err:
 	xhci_mtk_phy_shutdown(mtk);
 phys_err:
