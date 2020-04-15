@@ -213,7 +213,7 @@
 		      <0x1a0c4700 0x0100>;
 		reg-names = "mac", "ippc";
 		interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_LOW>;
-		//power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF1>;
+		power-domains = <&scpsys MT7629_POWER_DOMAIN_HIF1>;
 		clocks = <&ssusbsys CLK_SSUSB_SYS_EN>,
 			 <&ssusbsys CLK_SSUSB_REF_EN>,
 			 <&ssusbsys CLK_SSUSB_MCU_EN>,
