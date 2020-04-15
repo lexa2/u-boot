@@ -195,7 +195,7 @@
 	ssusbsys: ssusbsys@1a000000 {
 		compatible = "mediatek,mt7622-ssusbsys",
 			     "syscon";
-		reg = <0 0x1a000000 0 0x1000>;
+		reg = <0x1a000000 0x1000>;
 		#clock-cells = <1>;
 		#reset-cells = <1>;
 	};
@@ -203,8 +203,8 @@
 	ssusb: usb@1a0c0000 {
 		compatible = "mediatek,mt7622-xhci",
 			     "mediatek,mtk-xhci";
-		reg = <0 0x1a0c0000 0 0x01000>,
-		      <0 0x1a0c4700 0 0x0100>;
+		reg = <0x1a0c0000 0x01000>,
+		      <0x1a0c4700 0x0100>;
 		reg-names = "mac", "ippc";
 		interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_LOW>;
 		//power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF1>;
