@@ -603,6 +603,7 @@ static int mt7622_sgmiisys_probe(struct udevice *dev)
 
 static int mt7622_ssusbsys_probe(struct udevice *dev)
 {
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	return mtk_common_clk_gate_init(dev, &mt7622_clk_tree, ssusb_cgs);
 }
 

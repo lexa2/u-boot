@@ -523,11 +523,12 @@ int mtk_common_clk_gate_init(struct udevice *dev,
 			     const struct mtk_gate *gates)
 {
 	struct mtk_cg_priv *priv = dev_get_priv(dev);
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	priv->base = dev_read_addr_ptr(dev);
+printf("debug: %s %d priv-base:0x%x\n",__FUNCTION__,__LINE__,(unsigned int)priv->base);
 	if (!priv->base)
 		return -ENOENT;
-
+printf("debug: %s %d\n",__FUNCTION__,__LINE__);
 	priv->tree = tree;
 	priv->gates = gates;
 
