@@ -398,7 +398,7 @@
 	u3phy1: usb-phy1@1a1c4000 {
 		compatible = "mediatek,mt7623-tphy", "mediatek,generic-tphy-v1";
 
-		reg = <0 0x1a1c4000 0 0x0700>;
+		reg = <0x1a1c4000 0x0700>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
@@ -433,7 +433,7 @@
 	u3phy2: usb-phy2@1a244000 {
 		compatible = "mediatek,mt7623-tphy", "mediatek,generic-tphy-v1";
 
-		reg = <0 0x1a244000 0 0x0700>;
+		reg = <0x1a244000 0x0700>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges;
