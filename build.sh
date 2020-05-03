@@ -1,6 +1,7 @@
 #!/bin/bash
 export ARCH=arm;
-export CROSS_COMPILE=arm-linux-gnueabihf-
+#export CROSS_COMPILE=arm-linux-gnueabihf-
+export CROSS_COMPILE=arm-openwrt-linux-muslgnueabi-
 
 uver=$(make ubootversion)
 ubranch=$(git branch --contains $(git log -n 1 --pretty='%h') | grep -v '(HEAD' | head -1 | sed 's/^..//'| sed 's/^[0-9.-]*//')
@@ -152,6 +153,6 @@ case $1 in
 		upload
 	;;
 	*)
-		$0 build;
+		make $*;
 	;;
 esac
