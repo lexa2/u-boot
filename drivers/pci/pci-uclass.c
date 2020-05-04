@@ -356,6 +356,7 @@ int pci_bus_read_config(const struct udevice *bus, pci_dev_t bdf, int offset,
 	struct dm_pci_ops *ops;
 
 	ops = pci_get_ops(bus);
+	debug("%s: read_config = %p\n", __func__, ops->read_config);
 	if (!ops->read_config)
 		return -ENOSYS;
 	return ops->read_config(bus, bdf, offset, valuep, size);
@@ -591,22 +592,31 @@ int pci_generic_mmap_read_config(
 {
 	void *address;
 
+	debug("%s: about to call addr_f\n", __func__);
+
 	if (addr_f(bus, bdf, offset, &address) < 0) {
 		*valuep = pci_get_ff(size);
+		debug("%s: addr_f returned negative, setting value to FFs\n", __func__);
 		return 0;
 	}
+
+	debug("%s: addr_f returned address = %p, about to call readX on it\n", __func__, address);
 
 	switch (size) {
 	case PCI_SIZE_8:
 		*valuep = readb(address);
+		debug("%s: value = %lx\n", __func__, *valuep);
 		return 0;
 	case PCI_SIZE_16:
 		*valuep = readw(address);
+		debug("%s: value = %lx\n", __func__, *valuep);
 		return 0;
 	case PCI_SIZE_32:
 		*valuep = readl(address);
+		debug("%s: value = %lx\n", __func__, *valuep);
 		return 0;
 	default:
+		debug("%s: ERROR - invalid read size = %d requested\n", __func__, size);
 		return -EINVAL;
 	}
 }
@@ -782,31 +792,47 @@ int pci_bind_bus_devices(struct udevice *bus)
 	bool found_multi;
 	int ret;
 
+	debug("%s: binding devices on bus %d (%s)\n", __func__, bus->seq, bus->name);
+
 	found_multi = false;
 	end = PCI_BDF(bus->seq, PCI_MAX_PCI_DEVICES - 1,
 		      PCI_MAX_PCI_FUNCTIONS - 1);
+
+	debug("%s: found end of the bdf list = %d\n", __func__, end);
+
 	for (bdf = PCI_BDF(bus->seq, 0, 0); bdf <= end;
 	     bdf += PCI_BDF(0, 0, 1)) {
 		struct pci_child_platdata *pplat;
 		struct udevice *dev;
 		ulong class;
 
+		debug("%s: in bdf loop, bdf = %d\n", __func__, bdf);
+
 		if (!PCI_FUNC(bdf))
 			found_multi = false;
 		if (PCI_FUNC(bdf) && !found_multi)
 			continue;
 
+		debug("%s: about to read device vendor\n", __func__);
+
 		/* Check only the first access, we don't expect problems */
 		ret = pci_bus_read_config(bus, bdf, PCI_VENDOR_ID, &vendor,
 					  PCI_SIZE_16);
+
+		debug("%s: done reading device config, ret = %d, vendor = %lx\n", __func__, ret, vendor);
+
 		if (ret)
 			goto error;
 
 		if (vendor == 0xffff || vendor == 0x0000)
 			continue;
 
-		pci_bus_read_config(bus, bdf, PCI_HEADER_TYPE,
+		debug("%s: about to read device config - header type\n", __func__);
+
+		ret = pci_bus_read_config(bus, bdf, PCI_HEADER_TYPE,
 				    &header_type, PCI_SIZE_8);
+
+		debug("%s: done reading header tyoe, ret = %d, type = %lu\n", __func__, ret, header_type);
 
 		if (!PCI_FUNC(bdf))
 			found_multi = header_type & 0x80;

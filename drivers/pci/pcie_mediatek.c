@@ -73,8 +73,16 @@ static int mtk_pcie_config_address(const struct udevice *udev, pci_dev_t bdf,
 {
 	struct mtk_pcie *pcie = dev_get_priv(udev);
 
+	debug("%s: pcie = %p\n", __func__, pcie);
+
+	debug("%s: calling writel to write %lx to %p\n", __func__,
+			PCIE_CONF_ADDR(offset, bdf),
+			pcie->base + PCIE_CFG_ADDR);
+
 	writel(PCIE_CONF_ADDR(offset, bdf), pcie->base + PCIE_CFG_ADDR);
+	debug("%s: after writel\n", __func__);
 	*paddress = pcie->base + PCIE_CFG_DATA + (offset & 3);
+	debug("%s: paddress = %p\n", __func__, *paddress);
 
 	return 0;
 }
@@ -83,6 +91,7 @@ static int mtk_pcie_read_config(const struct udevice *bus, pci_dev_t bdf,
 				uint offset, ulong *valuep,
 				enum pci_size_t size)
 {
+	debug("%s: about to call generic mmap read config, bus %d (%s)\n", __func__, bus->seq, bus->name);
 	return pci_generic_mmap_read_config(bus, mtk_pcie_config_address,
 					    bdf, offset, valuep, size);
 }
@@ -121,12 +130,13 @@ static int mtk_pcie_startup_port(struct mtk_pcie_port *port)
 	/* 100ms timeout value should be enough for Gen1/2 training */
 	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS, val,
 				 !!(val & PCIE_PORT_LINKUP), 100000);
-	if (err)
-		return -ETIMEDOUT;
 
 	/* disable interrupt */
 	clrbits_le32(pcie->base + PCIE_INT_ENABLE,
 		     PCIE_PORT_INT_EN(port->slot));
+
+	if (err)
+		return -ETIMEDOUT;
 
 	/* map to all DDR region. We need to set it before cfg operation. */
 	writel(PCIE_BAR_MAP_MAX | PCIE_BAR_ENABLE,
