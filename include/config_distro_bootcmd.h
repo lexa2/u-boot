@@ -166,6 +166,15 @@
 #define SCAN_DEV_FOR_EFI
 #endif
 
+#if defined(CONFIG_DM_PCI)
+#define BOOTENV_RUN_PCI_ENUM "run boot_pci_enum; "
+#define BOOTENV_SHARED_PCI \
+	"boot_pci_enum=pci enum\0"
+#else
+#define BOOTENV_RUN_PCI_ENUM
+#define BOOTENV_SHARED_PCI
+#endif
+
 #ifdef CONFIG_SATA
 #define BOOTENV_SHARED_SATA	BOOTENV_SHARED_BLKDEV(sata)
 #define BOOTENV_DEV_SATA	BOOTENV_DEV_BLKDEV
@@ -207,6 +216,11 @@
 #ifdef CONFIG_SCSI
 #define BOOTENV_RUN_SCSI_INIT "run scsi_init; "
 #define BOOTENV_SET_SCSI_NEED_INIT "scsi_need_init=; "
+#if defined(BOOT_TARGET_DEVICES_SCSI_NEEDS_PCI)
+#define BOOTENV_RUN_SCSI_PCI_ENUM BOOTENV_RUN_PCI_ENUM
+#else
+#define BOOTENV_RUN_SCSI_PCI_ENUM
+#endif
 #define BOOTENV_SHARED_SCSI \
 	"scsi_init=" \
 		"if ${scsi_need_init}; then " \
@@ -215,6 +229,7 @@
 		"fi\0" \
 	\
 	"scsi_boot=" \
+		BOOTENV_RUN_SCSI_PCI_ENUM \
 		BOOTENV_RUN_SCSI_INIT \
 		BOOTENV_SHARED_BLKDEV_BODY(scsi)
 #define BOOTENV_DEV_SCSI	BOOTENV_DEV_BLKDEV
@@ -252,15 +267,6 @@
 	BOOT_TARGET_DEVICES_references_IDE_without_CONFIG_IDE
 #define BOOTENV_DEV_NAME_IDE \
 	BOOT_TARGET_DEVICES_references_IDE_without_CONFIG_IDE
-#endif
-
-#if defined(CONFIG_DM_PCI)
-#define BOOTENV_RUN_PCI_ENUM "run boot_pci_enum; "
-#define BOOTENV_SHARED_PCI \
-	"boot_pci_enum=pci enum\0"
-#else
-#define BOOTENV_RUN_PCI_ENUM
-#define BOOTENV_SHARED_PCI
 #endif
 
 #ifdef CONFIG_CMD_USB
